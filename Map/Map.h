@@ -6,69 +6,96 @@ using namespace std;
 
 class Player;
 
-class Map;
-
 class Territory
 {
    private:
         // "Conquest" game format
-        string territoryIdentity;
+        string territoryName;
         int x; //Cartesion coordinate x
         int y; //Cartesion coordinate y
-        Continent *continentOfTerritory;
+        string continentName;
+        vector <string> territoryIndex;
         vector<Territory*> adjacentTerritories;
 
-        int armiesQuantity;
-        //NEED TO INCLUDE THE PLAYER HEADFILE AT THE END
-        Player *territoryHolder;
+        int numberOfArmies;
+        Player *owner;
     public:
 
         //Constructors
         Territory();
-        Territory(string inTerritoryIdentity, int inX, int inY, Continent* inContinentOfTerritory, vector <Territory*> inAdjacentTerritories, int inArmyQuantity, Player* inTerritoryHolder);
+        Territory(const Territory& tObj);
+        Territory(string inTerritoryName, int inX, int inY, string inContinentName, vector <Territory*> inAdjacentTerritories, int inArmyQuantity, Player* inTerritoryHolder);
 
         //Accessors
-        string getTerritoryIdentity();
+        string getTerritoryName();
         int getX();
         int getY();
-        Continent* getContinentOfTerritory();
+        string getContinentName();
         vector <Territory*> getAdjacentTerritories();
 
         //Setters
-        void setTerritoryIdentity(string inTerritoryIdentity);
+        void setTerritoryName(string inTerritoryName);
         void setX(int inX);
         void setY(int inY);
-        void setContinentOfTerritory(Continent* inContinentOfTerritory);
+        void setContinentIndex(string inContinentIndex);
         void setAdjaccentTerritories(vector <Territory*> inAdjacentTerritories);
 
 
 };
 
-
 class Continent
 {
     private:
         string continentIdentity;
-        int continentID;
+        int numberOfTerritories;
         vector <Territory*> Territories;
 
     public:
-        //Default Constructor
+        //Constructors
         Continent();
-        //Parameterized Constructor
-        Continent(string inContinentIdentity, int inContinentID, vector <Territory*> inTerritories);
+        Continent(const Continent& cObj);
+        Continent(string inContinentIdentity, int inNumberOfTerritories);
+        Continent(string inContinentIdentity, int inNumberOfTerritories, vector <Territory*> inTerritories);
 
         //Accessors
         string getContinentIdentity();
-        int getContinentID();
+        int getNumberOfTerritories();
         vector <Territory*> getTerritories();
 
         //Setters
         void setContinentIdentity(string inContinentIdentity);
-        void setContinentID(int inContinentID);
+        void setNumberOfTerritories(int inContinentID);
         void setTerritories(vector <Territory*> inTerritories);
         
 };
+
+
+
+class Map
+{
+    private:
+        vector <Continent*> continent;
+        vector <Territory*> territory;
+
+    public:
+        //Constructors
+        Map();
+        Map(const Map& mObj);
+        Map(vector <Continent*> inContinent, vector <Territory*> inTerritory);
+
+        //Accessors
+        vector <Continent*> getContinent();
+        vector <Territory*> getTerritory();
+
+        //Setters
+        void setContinent(vector <Continent*> inContinent);
+        void setTerritory(vector <Territory*> inTerritory);
+};
+
+
+
+
+
 
 
 
@@ -78,5 +105,10 @@ class mapLoader
     public:
 
     static Map* createMapFromConquestFile(string fileName);
+
+    static string getContinentNameFromLine(string inStr);
+    static int getNumberOfTerritoriesFromLine(string inStr);
+
+    static string getContinentIDFromTerritory(string inStr);
 
 };
