@@ -56,22 +56,36 @@ Territory::Territory()
     this->owner = nullptr;
 }
 
+Territory::Territory(string inTerritoryName, int inX, int inY, string inContinentName, vector<string> inTerritoryIndex)
+{
+     this->territoryName = inTerritoryName;
+    this->x = inX;
+    this->y = inY;
+    this->continentName = inContinentName;
+    this->territoryIndex = inTerritoryIndex;
+}
+
 Territory::Territory(const Territory& tObj)
 {
     this->territoryName = tObj.territoryName;
     this->x = tObj.x;
     this->y = tObj.y;
     this->continentName = tObj.continentName;
+    this->territoryIndex = tObj.territoryIndex;
+    this->adjacentTerritories = tObj.adjacentTerritories;
     this->numberOfArmies = tObj.numberOfArmies;
     this->owner = tObj.owner;
 }
 
-Territory::Territory(string inTerritoryName, int inX, int inY, string inContinentName, vector <Territory*> inAdjacentTerritories, int inArmyQuantity, Player* inTerritoryHolder)
+
+
+Territory::Territory(string inTerritoryName, int inX, int inY, string inContinentName,vector <string> inTerritoryIndex, vector <Territory*> inAdjacentTerritories, int inArmyQuantity, Player* inTerritoryHolder)
 {
     this->territoryName = inTerritoryName;
     this->x = inX;
     this->y = inY;
     this->continentName = inContinentName;
+    this->territoryIndex = inTerritoryIndex;
     this->adjacentTerritories = inAdjacentTerritories;
     this->numberOfArmies = inArmyQuantity;
     this->owner = inTerritoryHolder;
@@ -95,6 +109,11 @@ int Territory::getY()
 string Territory::getContinentName()
 {
     return this->continentName;
+}
+
+vector<string> Territory::getTerritoryIndex()
+{
+    return this->territoryIndex;
 }
 
 vector <Territory*> Territory::getAdjacentTerritories()
@@ -121,6 +140,12 @@ void Territory::setContinentIndex(string inContinentName)
 {
     this->continentName = inContinentName;
 }
+
+void Territory::setTerritoryIndex(vector<string> inTerritoryIndex)
+{
+    this->territoryIndex = inTerritoryIndex;
+}
+
 void Territory::setAdjaccentTerritories(vector <Territory*> inAdjacentTerritories)
 {
     this->adjacentTerritories = inAdjacentTerritories;
@@ -193,7 +218,7 @@ int mapLoader::getNumberOfTerritoriesFromLine(string inStr)
 }
 
 
-string mapLoader::getContinentIDFromTerritory(string inStr)
+Territory* mapLoader::getContinentIDFromTerritory(string inStr)
 {
     
     vector<string> tokens;
@@ -204,18 +229,54 @@ string mapLoader::getContinentIDFromTerritory(string inStr)
     int offset = 0;
     //cout << inStr << endl;
     int i = 0;
+    size_t found;
     //for (int i = 0; i < 6; i++)
-    while (tmpStr.length() > 1)
+    while (tmpStr.length())
     {
-        token = tmpStr.substr(offset, tmpStr.find(','));
+
+
+        found = tmpStr.find(',');
+        if (found != string::npos) 
+            token = tmpStr.substr(offset, tmpStr.find(','));
+        else
+        {
+            token = tmpStr;
+            tokens.push_back(token);
+            break;
+        }
         //cout << token << endl;
         tokens.push_back(token);
         i++;
+        //cout << "tempStr.find is   ";
+        //cout << tmpStr.find(',') << endl; 
         tmpStr =  tmpStr.substr(tmpStr.find(',') +1, tmpStr.length() - 1 );
+        
+        
+        //cout << "tmpStr length is:   ";
         //cout << tmpStr.length() << endl;
     }
 
-    return tokens[3];
+    //Creating Territory Objects to return
+    string inTerritoryName = tokens[0];
+    int inX = stoi(tokens[1]);
+    int inY = stoi(tokens[2]);
+    string inContinentName = tokens[3] ;
+
+    // cout << "Token size is:   ";
+    // cout << tokens.size() << endl;
+
+    //cout << tokens[3] << " ";
+    vector<string> inTerritoryIndex;
+    for (int i = 4; i < tokens.size(); i++) 
+    {
+        inTerritoryIndex.push_back(tokens[i]);
+        //cout << tokens[i] << " ";
+    }
+    cout << endl;
+
+    Territory* t = new Territory(inTerritoryName, inX, inY, inContinentName, inTerritoryIndex );
+
+    return t;
     
     //token = inStr.substr(0, inStr.find(','));
     //cout << inStr.substr(0, inStr.find(',')) << endl;
@@ -282,11 +343,30 @@ Map* mapLoader::createMapFromConquestFile(string inFileName)
             }
             else
             {
-                cout << mapLoader::getContinentIDFromTerritory(read) << endl;
+                mapTerritories.push_back(mapLoader::getContinentIDFromTerritory(read));
+
+                
+                 
+
+                //break;
+                
             }
         }
     }
-    
+
+    for (int j=0; j < mapTerritories.size(); j++)
+    {
+        cout << mapTerritories[j]->getTerritoryName() << " ";
+        cout << mapTerritories[j]->getX()<< " ";
+        cout << mapTerritories[j]->getY()<< " ";
+        cout << mapTerritories[j]->getContinentName()<< " ";
+
+        for (int i=0; i < mapTerritories[j]->getTerritoryIndex().size(); i++)
+        {
+            cout <<  mapTerritories[j]->getTerritoryIndex()[i] << " ";
+        }
+        cout << endl;
+    }
     
     inputfilestream.close();
     /*
@@ -299,4 +379,3 @@ Map* mapLoader::createMapFromConquestFile(string inFileName)
    
 
 }
-
