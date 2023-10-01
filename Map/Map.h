@@ -15,6 +15,7 @@ class Territory
         int y; //Cartesion coordinate y
         string continentName;
         vector <string> territoryIndex;
+
         vector<Territory*> adjacentTerritories;
 
         int numberOfArmies;
@@ -23,20 +24,23 @@ class Territory
 
         //Constructors
         Territory();
+        Territory(string inTerritoryName, int inX, int inY, string inContinentName, vector<string> inTerritoryIndex);
         Territory(const Territory& tObj);
-        Territory(string inTerritoryName, int inX, int inY, string inContinentName, vector <Territory*> inAdjacentTerritories, int inArmyQuantity, Player* inTerritoryHolder);
+        Territory(string inTerritoryName, int inX, int inY, string inContinentName,vector <string> inTerritoryIndex, vector <Territory*> inAdjacentTerritories, int inArmyQuantity, Player* inTerritoryHolder);
 
         //Accessors
         string getTerritoryName();
         int getX();
         int getY();
         string getContinentName();
+        vector<string> getTerritoryIndex();
         vector <Territory*> getAdjacentTerritories();
 
         //Setters
         void setTerritoryName(string inTerritoryName);
         void setX(int inX);
         void setY(int inY);
+        void setTerritoryIndex(vector<string> inTerritoryIndex);
         void setContinentIndex(string inContinentIndex);
         void setAdjaccentTerritories(vector <Territory*> inAdjacentTerritories);
 
@@ -109,6 +113,6 @@ class mapLoader
     static string getContinentNameFromLine(string inStr);
     static int getNumberOfTerritoriesFromLine(string inStr);
 
-    static string getContinentIDFromTerritory(string inStr);
+    static Territory* getContinentIDFromTerritory(string inStr);
 
 };
