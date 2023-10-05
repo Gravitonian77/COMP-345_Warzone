@@ -8,7 +8,7 @@ void testGameStates(){
 	State* map_loaded = game->newState("load_map");
 	State* map_validated = game->newState("map_validated");
 	State* players_added = game->newState("players_added");
-	State* assign_reinforcements = game->newState("assign_reinforcements");
+	State* assign_reinforcements = game->newState("assign_ref");
 	State* issue_orders = game->newState("issue_orders");
 	State* execute_orders = game->newState("execute_orders");
 	State* win = game->newState("win");
@@ -27,10 +27,14 @@ void testGameStates(){
 	game->addTransition(execute_orders, win, "win");
 	game->addTransition(win, start, "play");
 	game->setCurrentState(start);
-	game->startGame();
 
+	while(true) {
+		game->startGame();
+	}
 }
 
 int main(){
-	testGameStates();
+
+		testGameStates();
+
 }
