@@ -51,23 +51,19 @@ OrdersList* Player::getOrders() const {
 // Assignment operator
 Player& Player::operator=(const Player& other) {
     if (this == &other) {
-        return *this; // Self-assignment check
+        return *this; // Check if same player
     }
 
-    // Deep Copy myTerritories 
-    for (Territory* t : myTerritories) {
-        delete t;
-    }
-    myTerritories.clear();
-    for (Territory* t : other.myTerritories) {
-        myTerritories.push_back(new Territory(*t));
+    // Copy myTerritories 
+    for (int i = 0; i < other.myTerritories.size(); i++) {
+       this->myTerritories.push_back(new Territory(*(other.myTerritories[i])));
     }
 
-    // Deep Copy cards 
+    // Copy cards 
     delete myCards;
     myCards = new Hand(*other.myCards);
 
-    // Deep Copy orders
+    // Copy orders
     delete myOrders;
     myOrders = new OrdersList(*other.myOrders);
 
