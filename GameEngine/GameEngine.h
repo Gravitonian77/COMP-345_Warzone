@@ -17,8 +17,11 @@ class State;
 class Transition;
 
 class State{
-public:
+private:
 	string* stateName;
+public:
+
+	string* getStateName() const;
 	State();
 	State(string& state);
 	State(State &anotherState);
@@ -51,8 +54,6 @@ public:
 class GameEngine{
 
 private:
-	//meEngine(State *initialState, std::map<State *, Transition *, string &> transitions);
-
 	State* currentState;
 	map<std::string, std::pair<State*, State*>> transitions;
 	Map* map;
@@ -83,4 +84,3 @@ public:
 };
 
 #endif //UNTITLED_GAMEENGINE_H
-
