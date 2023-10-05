@@ -5,23 +5,41 @@
 using namespace std;
 
 int main() {
-    OrdersList ordersList;
-    ordersList.insertOrder("Deploy");
-    ordersList.insertOrder("Advance");
-    ordersList.insertOrder("Bomb");
-    ordersList.insertOrder("Blockade");
-    ordersList.insertOrder("Airlift");
-    ordersList.insertOrder("Negotiate");
-    cout << "Orders List: " << endl;
-    ordersList.printOrders();
+
+    //create orders
+    Deploy *deploy = new Deploy("Deploy",1);
+    Advance *advance = new Advance("Canada","USA",2);
+    Bomb *bomb = new Bomb("USA");
+    Blockade *blockade = new Blockade("USA");
+    Airlift *airlift = new Airlift("Canada","USA",3);
+    Negotiate *negotiate = new Negotiate("Canada","USA");
+
+    //create orders list
+    OrdersList *ordersList = new OrdersList();
+
+    //insert orders to orders list
+    ordersList->insertOrder(deploy);
+    ordersList->insertOrder(advance);
+    ordersList->insertOrder(bomb);
+    ordersList->insertOrder(blockade);
+    ordersList->insertOrder(airlift);
+    ordersList->insertOrder(negotiate);
+
+    //print orders list
+    cout << "Orders List:" << " ";
+    ordersList->printOrders();
     cout << endl;
-    ordersList.removeOrder(3);
-    cout << "Remove Node at position 3: " << endl;
-    ordersList.printOrders();
+
+    //move orders
+    cout << "Move orders From position 1 to 3:" << " ";
+    ordersList->moveOrder(1,3);
+    ordersList->printOrders();
     cout << endl;
-    ordersList.moveOrder(1, 3);
-    cout << "Move Node from position 1 to position 3: " << endl;
-    ordersList.printOrders();
+
+    //remove orders
+    cout << "Remove orders at position 0:" << " ";
+    ordersList->removeOrder(0);
+    ordersList->printOrders();
     cout << endl;
-    return 0;
+
 }
