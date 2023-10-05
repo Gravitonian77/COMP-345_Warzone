@@ -1,9 +1,14 @@
 #include <iostream>
 #include "GameEngine.h"
+#include "Map.h"
 
 State::State() = default;
 State::State(std::string& state) {
-	this->stateName = stateName;
+	this->stateName = &state;
+}
+
+string* State::getStateName() const{
+	return stateName;
 }
 
 State::State(State &anotherState) {
@@ -17,60 +22,25 @@ State &State::operator=(const State &state) {
 	return *this;
 }
 
-ostream &operator<<(ostream& out, const State& state) {
-	out << "Current State: " << state.stateName << endl;
+ostream &operator<<(ostream& out, const State &state) {
+
+		if((state.getStateName()) != nullptr) {
+			out << "Current State: " << (*state.getStateName()) << endl;
+		} else{
+			out << "statename is null";
+		}
 	return out;
 }
 
 void State::onEnter(GameEngine *engine) {
 	engine->setCurrentState(this);
+	cout << "State changed\n";
 }
 
 void State::onExit(GameEngine *engine) {
 	engine->setCurrentState(nullptr);
+	cout << "Changing states...\n";
 }
-
-/*LoadState::LoadState() = default;
-
-void LoadState::onEnter(GameEngine *engine) {
-	engine->setCurrentState(this);
-}
-
-void LoadState::onExit(GameEngine *engine) {
-	engine->setCurrentState(nullptr);
-}
-
-void MapState::onEnter(GameEngine *engine) {
-	engine->setCurrentState(this);
-}
-
-void MapState::onExit(GameEngine *engine) {
-	engine->setCurrentState(nullptr);
-}
-
-void PlayerState::onEnter(GameEngine *engine) {
-	engine->setCurrentState(this);
-}
-
-void PlayerState::onExit(GameEngine *engine) {
-	engine->setCurrentState(nullptr);
-}
-
-void PlayerState::addPlayer(Player *) {
-	cout << "player added";
-}
-
-void OrderState::validate() {
-	cout << "validated";
-}
-
-*/
-
-
-
-
-
-
 
 
 Transition::Transition() = default;
@@ -101,17 +71,6 @@ ostream &operator<<(ostream& out, const Transition& transition){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 GameEngine::GameEngine() = default;
 GameEngine::GameEngine(State *initialState, std::pair<State*, State*> transitions) {
 	this->currentState = initialState;
@@ -131,13 +90,14 @@ GameEngine &GameEngine::operator=(const GameEngine &game) {
 	return *this;
 }
 
-ostream &operator<<(ostream& out, const GameEngine& game){
+/*ostream &operator<<(ostream& out, const GameEngine& game){
 	out << "State: " << game.getCurrentState() << " Transition: " << game.getTransition();
 	return out;
-}
+}*/
 
 void GameEngine::setCurrentState(State *state) {
 	this->currentState = state;
+	//this->currentState->stateName = state->stateName;
 }
 
 State *GameEngine::getCurrentState() const {
@@ -146,11 +106,15 @@ State *GameEngine::getCurrentState() const {
 
 void GameEngine::changeState(string& command) {
 	//change current state if newState is not the final state
-	if(transitions.find(command) != transitions.end()) {
+
+	if((transitions.find(command) != transitions.end()) && (transitions.find(command)->second.second->getStateName())) {
 		currentState->onExit(this);
-		currentState = transitions[command].second;
+		cout<< "debug: " << *transitions[command].second;//to //A -> B ; B
+		setCurrentState(transitions[command].second);
 		currentState->onEnter(this);
+		cout <<  *currentState;
 	}
+
 }
 
 void GameEngine::addTransition(State *from, State *to, string command) {
@@ -178,32 +142,56 @@ void GameEngine::startGame() {
 }
 
 void GameEngine::processCommand(std::string command) {
-
+	string stateNow = *getCurrentState()->getStateName();
 	if(transitions.find(command) != transitions.end()){
-		//changeState(command);
+		//currentState = new State(command);
 
-		if(command == "loadmap"){
-			setMap(map);
-		}else if(command == "validatemap"){
-			cout << "validated";
-		}else if(command == "addplayer"){
+		if(command == "loadmap" && ((stateNow == "start") || (stateNow == "load_map"))){
 
-		}else if(command == "assigncountries"){
+			changeState(command);
+			//setMap(mapLoader::createMapFromConquestFile(""));
 
-		}else if(command == "issueorder"){
+		}else if(command == "validatemap" && (stateNow == "load_map")){
 
-		}else if(command == "endissueorders"){
+			changeState(command);
 
-		}else if(command == "execorder"){
+		}else if(command == "addplayer" && ((stateNow == "map_validated") || (stateNow == "players_added"))){
 
-		}else if(command == "endexecorders"){
+			changeState(command);
 
-		}else if(command == "win"){
+		}else if(command == "assigncountries" && (stateNow == "players_added")){
+			cout << "previous state = " << stateNow << endl;
+			changeState(command);
+			stateNow = *getCurrentState()->getStateName();
+			cout << "current state = " << stateNow <<endl;
+		}else if(command == "issueorder" && ((stateNow == "assign_ref") || (stateNow == "issue_orders"))){
+
+			changeState(command);
+
+		}else if(command == "endissueorders" && (stateNow == "issue_orders")){
+
+			changeState(command);
+
+		}else if(command == "execorder" && (stateNow == "execute_orders")){
+
+			changeState(command);
+
+		}else if(command == "endexecorders" && (stateNow == "execute_orders")){
+
+			changeState(command);
+
+		}else if(command == "win" && (stateNow == "execute_orders")){
+
+			changeState(command);
 
 		}else if(command == "end"){
 
-		}else if(command == "play"){
+			changeState(command);
 
+		}else if(command == "play" && stateNow == "win"){
+			changeState(command);
+		}else{
+			cout << "This is not a valid transition. Please enter a valid state to transition to. \n";
 		}
 
 	}else
