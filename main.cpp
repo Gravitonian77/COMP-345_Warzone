@@ -1,5 +1,6 @@
 // MainDriver.cpp
 #include "Cards/Cards.h"
+#include "Orders/Orders.cpp"
 
 // Function to test the Card classes
 void testCards() {
@@ -18,5 +19,6 @@ void testCards() {
 
 int main() {
     testCards();
+    testOrdersLists();
     return 0;
 }
