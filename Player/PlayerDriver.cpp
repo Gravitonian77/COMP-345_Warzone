@@ -1,10 +1,6 @@
 #include <iostream>
-#include "Map.h"
 #include "Map.cpp"
-#include "Cards.h"
-#include "Orders.h"
 #include "Orders.cpp"
-#include "Player.h"
 #include "Player.cpp"
 using namespace std;
 
