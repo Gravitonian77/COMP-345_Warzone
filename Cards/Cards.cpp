@@ -1,80 +1,121 @@
 #include "Cards.h"
-#include <iostream>
-#include <algorithm>
-#include <ctime>
-#include <cstdlib>
 
-Card::Card(CardType type) : type_(type) {}
+Card::Card(CardType type) : type(new CardType(type)) {}
 
-void Card::play() {
-    std::cout << "Playing a " << getTypeAsString() << " card." << std::endl;
+Card::Card(const Card& other) : type(new CardType(*(other.type))) {}
+
+Card& Card::operator=(const Card& other) {
+    if (this != &other) {
+        delete type;  // Release the previous type
+        type = new CardType(*(other.type));
+    }
+    return *this;
+}
+
+Card::~Card() {
+    delete type;
 }
 
 Card::CardType Card::getType() const {
-    return type_;
+    return *type;
 }
 
-std::string Card::getTypeAsString() const {
-    // Convert the card type to a string for display purposes.
-    switch (type_) {
-        case BOMB:
-            return "bomb";
-        case REINFORCEMENT:
-            return "reinforcement";
-        case BLOCKADE:
-            return "blockade";
-        case AIRLIFT:
-            return "airlift";
-        case DIPLOMACY:
-            return "diplomacy";
+void Card::play() {
+    std::string typeName;
+
+    switch (*type) {
+        case CardType::BOMB:
+            typeName = "BOMB";
+            break;
+        case CardType::REINFORCEMENT:
+            typeName = "REINFORCEMENT";
+            break;
+        case CardType::BLOCKADE:
+            typeName = "BLOCKADE";
+            break;
+        case CardType::AIRLIFT:
+            typeName = "AIRLIFT";
+            break;
+        case CardType::DIPLOMACY:
+            typeName = "DIPLOMACY";
+            break;
         default:
-            return "unknown";
+            typeName = "UNKNOWN";
+            break;
     }
+
+    std::cout << "Card of type " << typeName << " has been played." << std::endl;
 }
+
 
 Deck::Deck() {
-    initializeDeck();
-}
-
-void Deck::initializeDeck() {
-    cards_.clear();
-    // Initialize the deck with five cards of each type and shuffle them.
+    // Initialize the deck with all card types
     for (int i = 0; i < 5; ++i) {
-        cards_.emplace_back(Card::BOMB);
-        cards_.emplace_back(Card::REINFORCEMENT);
-        cards_.emplace_back(Card::BLOCKADE);
-        cards_.emplace_back(Card::AIRLIFT);
-        cards_.emplace_back(Card::DIPLOMACY);
+        cards.push_back(new Card(static_cast<Card::CardType>(i)));
     }
-    shuffleDeck();
 }
 
-Card Deck::draw() {
-    if (cards_.empty()) {
-        initializeDeck();
+Deck::Deck(const Deck& other) {
+    for (const Card* card : other.cards) {
+        cards.push_back(new Card(*card));
     }
-    // Draw and return the top card from the deck.
-    Card drawnCard = cards_.back();
-    cards_.pop_back();
-    return drawnCard;
 }
 
-void Deck::shuffleDeck() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-    // Shuffle the cards in the deck using random shuffling.
-    std::random_shuffle(cards_.begin(), cards_.end());
-}
+Deck& Deck::operator=(const Deck& other) {
+    if (this != &other) {
+        // Release memory for the current cards
+        for (Card* card : cards) {
+            delete card;
+        }
+        cards.clear();
 
-void Hand::addCard(const Card& card) {
-    // Add a card to the hand.
-    cards_.push_back(card);
-}
-
-void Hand::playAll() {
-    // Simulate playing all cards in the hand.
-    for (Card& card : cards_) {
-        card.play();
+        // Copy cards from the other deck
+        for (const Card* card : other.cards) {
+            cards.push_back(new Card(*card));
+        }
     }
-    // Clear the hand after playing all cards.
-    cards_.clear();
+    return *this;
+}
+
+Deck::~Deck() {
+    for (Card* card : cards) {
+        delete card;
+    }
+    cards.clear();
+}
+
+void Deck::shuffle() {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::shuffle(cards.begin(), cards.end(), std::default_random_engine(seed));
+}
+
+Card* Deck::draw() {
+    if (!cards.empty()) {
+        Card* drawnCard = cards.back();
+        cards.pop_back();
+        return drawnCard;
+    } else {
+        // Handle the case when the deck is empty
+        // You can throw an exception or return a special card
+        return new Card(Card::CardType::BOMB); // Example, returning a bomb card
+    }
+}
+
+void testCards() {
+    Deck deck;
+    deck.shuffle();
+
+    // Create a hand object
+    std::vector<Card*> hand;
+
+    // Draw cards from the deck and add them to the hand
+    for (int i = 0; i < 5; ++i) {
+        hand.push_back(deck.draw());
+    }
+
+    // Play the cards in the hand
+    for (Card* card : hand) {
+        card->play();
+        delete card;  // Release the card after playing
+    }
 }
