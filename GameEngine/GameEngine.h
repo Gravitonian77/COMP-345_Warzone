@@ -99,3 +99,9 @@ public:
 };
 
 #endif //UNTITLED_GAMEENGINE_H
+
+class GameEngineDriver{
+
+	void testGameStates();
+
+};
