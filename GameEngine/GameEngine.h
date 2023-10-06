@@ -10,76 +10,91 @@
 using namespace std;
 
 class GameEngine;
-class Player;
-class Map;
-class Orders;
 class State;
-class Transition;
+
 
 class State{
 private:
+	//State name
 	string* stateName;
+
 public:
 
-	string* getStateName() const;
+	//default constructor
 	State();
+
+	//Parametrized constructor
 	State(string& state);
+
+	//copy constructor
 	State(State &anotherState);
+
+	//assignment operator
 	State& operator = (const State& state);
+
+	//stream insertion operator
 	friend ostream& operator<<(ostream& out, const State& state);
+
+	//destructor
 	~State() ;
 
+	//State name getter
+	string* getStateName() const;
+
+	//Exit and Enter functions for transitioning between states
 	void onEnter(GameEngine* engine) ;
 	void onExit(GameEngine* engine);
 };
 
 
 
-class Transition{
-private:
-	State* from;
-	State* to;
-	string* command;
-
-public:
-	Transition();
-	Transition(State* fromState, State* toState, string* command);
-	Transition(const Transition& transition);
-	~Transition();
-	Transition& operator = (const Transition& transition);
-	friend ostream& operator<<(ostream& out, const Transition& transition);
-	State* getToState() const;
-};
-
 class GameEngine{
 
 private:
+
+	//State object
 	State* currentState;
+
+	//Map for mapping commands with transitioning states
 	map<std::string, std::pair<State*, State*>> transitions;
-	Map* map;
-	Player* player;
-	Orders* order;
 
 public:
+
+	//default constructor
 	GameEngine();
+
+	//parametrized constructor
 	GameEngine(State* initialState, std::pair<State*, State*> transitions);
+
+	//copy constructor
 	GameEngine(const GameEngine& game);
-	~GameEngine();
+
+	//assignment operator
 	GameEngine& operator = (const GameEngine& game);
+
+	//stream insertion operator
 	friend  ostream&  operator << (ostream& out, const GameEngine& game);
+
+	//destructor
+	~GameEngine();
+
+	//Current state getter
+	State * getCurrentState() const;
+
+	//Current state setter
+	void setCurrentState(State* state);
+
+	//Transition map getter
+	std::map<std::string, std::pair<State*, State*>> getTransition() const;
+
+	//Transition map setter
 	void addTransition(State* from, State *to, string command);
+
+	//
 	void changeState(string& command);
 	void startGame();
 	void processCommand(string command);
-	void setMap(Map* pMap);
-	Map* getMap();
 	State* newState(string stateName);
-
-	void issueOrders(Orders*);
-	State * getCurrentState() const;
-	void setCurrentState(State* state);
-	std::map<std::string, std::pair<State*, State*>> getTransition() const;
-
 
 };
 
