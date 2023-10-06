@@ -1,6 +1,6 @@
 #include "GameEngine.h"
 
-void testGameStates(){
+void GameEngineDriver::testGameStates(){
 
 	//Instantiating a GameEngine object to run the game
 	GameEngine* game = new GameEngine();
