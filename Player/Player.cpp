@@ -143,11 +143,7 @@ vector<Territory*> Player::ToAttack() {
 }
 
 
-void Player::issueOrder(string orderDescription) {
-    // Create an Order object
-    Order* newOrder = new Order(orderDescription);
-
-    // Add Order object to the player's list of orders
-    myOrders->insertOrder(newOrder);
-    
+void Player::issueOrder(Order* order) {
+    // Add the order to the player's order list
+    myOrders->insertOrder(order);
 }
