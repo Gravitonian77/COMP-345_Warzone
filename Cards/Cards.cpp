@@ -1,14 +1,22 @@
 #include "Cards.h"
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <algorithm>
 
-Card::Card(CardType type) : type(new CardType(type)) {}
+// Card Method Implementations
+Card::Card(CardType type) {
+    this->type = new CardType(type);
+}
 
-Card::Card(const Card& other) : type(new CardType(*(other.type))) {}
+Card::Card(const Card& other) {
+    type = new CardType(*(other.type));
+}
 
 Card& Card::operator=(const Card& other) {
-    if (this != &other) {
-        delete type;  // Release the previous type
-        type = new CardType(*(other.type));
-    }
+    if (this == &other) return *this;
+    delete type;
+    type = new CardType(*(other.type));
     return *this;
 }
 
@@ -16,106 +24,146 @@ Card::~Card() {
     delete type;
 }
 
-Card::CardType Card::getType() const {
-    return *type;
-}
-
 void Card::play() {
-    std::string typeName;
-
+    std::string cardName;
     switch (*type) {
         case CardType::BOMB:
-            typeName = "BOMB";
+            cardName = "Bomb";
             break;
         case CardType::REINFORCEMENT:
-            typeName = "REINFORCEMENT";
+            cardName = "Reinforcement";
             break;
         case CardType::BLOCKADE:
-            typeName = "BLOCKADE";
+            cardName = "Blockade";
             break;
         case CardType::AIRLIFT:
-            typeName = "AIRLIFT";
+            cardName = "Airlift";
             break;
         case CardType::DIPLOMACY:
-            typeName = "DIPLOMACY";
-            break;
-        default:
-            typeName = "UNKNOWN";
+            cardName = "Diplomacy";
             break;
     }
-
-    std::cout << "Card of type " << typeName << " has been played." << std::endl;
+    std::cout << "Playing a card of type: " << cardName << std::endl;
 }
 
-
-Deck::Deck() {
-    // Initialize the deck with all card types
-    for (int i = 0; i < 5; ++i) {
-        cards.push_back(new Card(static_cast<Card::CardType>(i)));
+std::ostream& operator<<(std::ostream& os, const Card& card) {
+    std::string cardName;
+    switch (*(card.type)) {
+        case CardType::BOMB:
+            cardName = "Bomb";
+            break;
+        case CardType::REINFORCEMENT:
+            cardName = "Reinforcement";
+            break;
+        case CardType::BLOCKADE:
+            cardName = "Blockade";
+            break;
+        case CardType::AIRLIFT:
+            cardName = "Airlift";
+            break;
+        case CardType::DIPLOMACY:
+            cardName = "Diplomacy";
+            break;
     }
+    os << "Card Type: " << cardName;
+    return os;
+}
+
+// Deck Method Implementations
+Deck::Deck() {
+    for(int i = 0; i < 5; ++i) {  // Assuming we create a deck with one card of each type
+        cards.push_back(new Card(static_cast<CardType>(i)));
+    }
+    std::srand(std::time(nullptr));  // Seed for random shuffling
 }
 
 Deck::Deck(const Deck& other) {
-    for (const Card* card : other.cards) {
+    for(auto& card : other.cards) {
         cards.push_back(new Card(*card));
     }
 }
 
 Deck& Deck::operator=(const Deck& other) {
-    if (this != &other) {
-        // Release memory for the current cards
-        for (Card* card : cards) {
-            delete card;
-        }
-        cards.clear();
+    if (this == &other) return *this;
 
-        // Copy cards from the other deck
-        for (const Card* card : other.cards) {
-            cards.push_back(new Card(*card));
-        }
+    for(auto& card : cards) {
+        delete card;
+    }
+    cards.clear();
+
+    for(auto& card : other.cards) {
+        cards.push_back(new Card(*card));
     }
     return *this;
 }
 
 Deck::~Deck() {
-    for (Card* card : cards) {
+    for(auto& card : cards) {
         delete card;
+    }
+}
+
+Card* Deck::draw() {
+    int random_index = std::rand() % cards.size();
+    Card* drawnCard = cards[random_index];
+    cards.erase(cards.begin() + random_index);
+    return drawnCard;
+}
+
+void Deck::returnCard(Card* card) {
+    cards.push_back(new Card(*card));  // Return a new copy of the card to the deck
+}
+
+// Hand Method Implementations
+Hand::Hand() = default;
+
+Hand::Hand(const Hand& other) {
+    for(auto& card : other.cards) {
+        cards.push_back(new Card(*card));
+    }
+}
+
+Hand& Hand::operator=(const Hand& other) {
+    if (this == &other) return *this;
+
+    for(auto& card : cards) {
+        delete card;
+    }
+    cards.clear();
+
+    for(auto& card : other.cards) {
+        cards.push_back(new Card(*card));
+    }
+    return *this;
+}
+
+Hand::~Hand() {
+    for(auto& card : cards) {
+        delete card;
+    }
+}
+
+void Hand::addCard(Card* card) {
+    cards.push_back(card);
+}
+
+void Hand::playAll(Deck& deck) {
+    for(auto& card : cards) {
+        card->play();
+        deck.returnCard(card);
     }
     cards.clear();
 }
 
-void Deck::shuffle() {
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::shuffle(cards.begin(), cards.end(), std::default_random_engine(seed));
-}
-
-Card* Deck::draw() {
-    if (!cards.empty()) {
-        Card* drawnCard = cards.back();
-        cards.pop_back();
-        return drawnCard;
-    } else {
-        // Handle the case when the deck is empty
-        // You can throw an exception or return a special card
-        return new Card(Card::CardType::BOMB); // Example, returning a bomb card
-    }
-}
-
-void testCards() {
+void testCards() {  // Function definition added here
     Deck deck;
-    deck.shuffle();
+    Hand hand;
 
-    // Create a hand object
-    std::vector<Card*> hand;
-
-    // Draw cards from the deck and add them to the hand
+    std::cout << "Drawing 5 cards..." << std::endl;
     for (int i = 0; i < 5; ++i) {
-        hand.push_back(deck.draw());
+        hand.addCard(deck.draw());
     }
 
-    // Play the cards in the hand
-    for (Card* card : hand) {
-        card->play();
-        delete card;  // Release the card after playing
-    }
+    std::cout << "Playing all cards in hand..." << std::endl;
+    hand.playAll(deck);
 }
