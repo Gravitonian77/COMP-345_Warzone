@@ -6,16 +6,14 @@ void testCards() {
     Deck deck;
     Hand hand;
 
-    // Fill the hand by drawing cards from the deck
+    // Draw cards from the deck and add them to the hand.
     for (int i = 0; i < 5; ++i) {
-        Card card = deck.draw();
-        hand.addCard(card);
+        Card drawnCard = deck.draw();
+        hand.addCard(drawnCard);
     }
 
-    // Play all cards in the hand and return them to the deck
-    hand.playAll(deck);
-
-    std::cout << "Cards remaining in the deck: " << deck.size() << std::endl;
+    // Play all cards in the hand.
+    hand.playAll();
 }
 
 int main() {
