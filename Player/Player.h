@@ -52,7 +52,7 @@ public:
     //Methods Required
     vector<Territory*> ToDefend();
     vector<Territory*> ToAttack();
-    void issueOrder(string orderDescription);
+    void issueOrder(Order* order);
 
 
 };
