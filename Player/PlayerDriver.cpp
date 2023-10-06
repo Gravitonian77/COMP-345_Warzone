@@ -60,12 +60,6 @@ void testPlayers() {
     cout << endl;
 
     // Orders
-    p1->issueOrder("P1 attacks P2");
-    p1->issueOrder("P1 defends from P2");
-
-    cout << "Orders of Player " << p1->getPlayerNumber() << ": ";
-    p1->getOrders()->printOrders();
-    cout << endl;
 
     // Release memory
     delete p1;
