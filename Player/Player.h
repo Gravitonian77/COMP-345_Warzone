@@ -36,9 +36,12 @@ public:
 
     //Accesors
     int getPlayerNumber() const;
-    vector<Territory *> getMyTerritories() const; // Accessor to return territories
-    Hand* getCards() const; // Accessor to return cards
-    OrdersList* getOrders() const; // Accessor to return orders
+    vector<Territory *> getMyTerritories() const; 
+    Hand* getCards() const; 
+    OrdersList* getOrders() const; 
+
+    // Add territory to the player's list
+    void addTerritory(Territory* territory);
 
     //Assignment operator
     Player& operator=(const Player& other);
@@ -49,9 +52,9 @@ public:
     //Methods Required
     vector<Territory*> ToDefend();
     vector<Territory*> ToAttack();
-    void issueOrder(const string& orderDescription);
+    void issueOrder(string orderDescription);
+
 
 };
 
-int Player::nextPlayerNumber = 1;  // Initialize the static member
-
+int Player::nextPlayerNumber = 1;

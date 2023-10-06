@@ -15,19 +15,17 @@ Player::Player(const Player& player)
 // Destructor
 Player::~Player() {
 
-     delete playerNumber;   
-    // Clean up dynamically allocated territories
+    delete playerNumber;   
+    
     for (Territory* t : myTerritories) {
         delete t;
         t = nullptr;
     }
     myTerritories.clear();
 
-    // Clean up dynamically allocated cards
     delete myCards;
     myCards = nullptr;
 
-    // Clean up dynamically allocated orders
     delete myOrders;
     myOrders = nullptr;
 }
@@ -48,13 +46,21 @@ OrdersList* Player::getOrders() const {
     return myOrders;
 }
 
+// add territory
+void Player::addTerritory(Territory* territory) {
+    myTerritories.push_back(territory);
+
+    territory->setPlayer(this);
+    cout <<"Territory "<< territory->getTerritoryName() << " was assigned to player " << *territory->getOwner()->playerNumber <<"\n";
+}
+
 // Assignment operator
 Player& Player::operator=(const Player& other) {
     if (this == &other) {
-        return *this;
+        return *this; 
     }
 
-    // Deep Copy myTerritories 
+    // Copy myTerritories 
     for (Territory* t : myTerritories) {
         delete t;
     }
@@ -62,12 +68,11 @@ Player& Player::operator=(const Player& other) {
     for (Territory* t : other.myTerritories) {
         myTerritories.push_back(new Territory(*t));
     }
-
-    // Deep Copy cards 
+    // Copy cards 
     delete myCards;
     myCards = new Hand(*other.myCards);
 
-    // Deep Copy orders
+    // Copy orders
     delete myOrders;
     myOrders = new OrdersList(*other.myOrders);
 
@@ -76,6 +81,8 @@ Player& Player::operator=(const Player& other) {
 
 //Stream Insertion Operator
 ostream& operator<<(ostream& out, const Player& player) {
+    out << "Player Number: " << player.getPlayerNumber() << endl;
+
     out << "My Territories: ";
     for (const Territory* territory : player.getMyTerritories()) {
         out << territory->getTerritoryName() << ", ";
@@ -100,9 +107,11 @@ vector<Territory*> Player::ToDefend() {
         // Check each adjacent territory
         for (Territory* adjacentTerritory : myTerritory->getAdjacentTerritories()) {
             // If the adjacent territory does not belong to the player, it needs to be defended
-            if (adjacentTerritory->getOwner() != myTerritory->getOwner()) {
+            if (adjacentTerritory->getOwner() != myTerritory->getOwner() && adjacentTerritory->getOwner() != nullptr) { // adjacentTerritory->getOwner() != myTerritory->getOwner()
                 needsDefending = true;
+               // cout <<myTerritory->getTerritoryName() << " Needs defending"<< endl; 
                 break; // No need to check other adjacent territories for this territory
+                
             }
         }
 
@@ -123,8 +132,8 @@ vector<Territory*> Player::ToAttack() {
     for (Territory* myTerritory : myTerritories) {
         // Check each adjacent territory
         for (Territory* adjacentTerritory : myTerritory->getAdjacentTerritories()) {
-            // If the adjacent territory is not owned by the player, it can be attacked
-            if (adjacentTerritory->getOwner() != myTerritory->getOwner()) {
+            // If the adjacent territory is owned by a different player, it can be attacked
+            if (adjacentTerritory->getOwner() != this) {
                 territoriesToAttack.push_back(adjacentTerritory);
             }
         }
@@ -133,12 +142,12 @@ vector<Territory*> Player::ToAttack() {
     return territoriesToAttack;
 }
 
-void Player::issueOrder(const string& orderDescription) {
+
+void Player::issueOrder(string orderDescription) {
     // Create an Order object
     Order* newOrder = new Order(orderDescription);
 
     // Add Order object to the player's list of orders
-    myOrders->insertOrder(orderDescription);
+    myOrders->insertOrder(newOrder);
     
 }
-
