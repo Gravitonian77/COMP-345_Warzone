@@ -4,7 +4,7 @@ using namespace std;
 
 
 // Constructors
-Player::Player() : playerNumber (new int(nextPlayerNumber++)), myCards(nullptr), myOrders(nullptr) {}
+Player::Player() : playerNumber(new int(nextPlayerNumber++)), myCards(nullptr), myOrders(new OrdersList()) {}
 
 Player::Player(vector<Territory *> territories, Hand* cards, OrdersList* orders)
     : playerNumber (new int(nextPlayerNumber++)),myTerritories(territories), myCards(cards), myOrders(orders) {}
