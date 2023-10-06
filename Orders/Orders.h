@@ -6,13 +6,15 @@
 #define WARZONE_ORDERS_H
 
 #include <iostream>
+#include <vector>
+
 using namespace std;
+
 
 class Order {
 private:
-    bool executed = false;
+    bool executed;
     string effect;
-    Order *next;
 public:
     //default constructor
     Order();
@@ -21,12 +23,7 @@ public:
     Order(const Order &order);
 
     //parameterized constructor
-    Order(string description);
-
-    //destructor
-    ~Order() {
-        delete next;
-    }
+    Order(bool executed, string effect);
 
     virtual bool validate();
     virtual void execute();
@@ -35,30 +32,33 @@ public:
     bool getExecuted();
     void setEffect(string effect);
     string getEffect();
-    void setNext(Order *next);
-    Order *getNext();
 };
 
 class OrdersList {
 private:
-    Order *head;
+    string player;
 public:
+    vector<Order*> ordersList;
     //default constructor
     OrdersList();
 
     //copy constructor
     OrdersList(const OrdersList &ordersList);
 
-    //destructor
-    ~OrdersList() {
-        delete head;
-    }
+    //parameterized constructor
+    OrdersList(string player, vector<Order *>& ordersList);
 
-    //set head
-    void setHead(Order *head);
+    //set player
+    void setPlayer(string player);
 
-    //get head
-    Order *getHead();
+    //get player
+    string getPlayer();
+
+    //get ordersList
+    vector<Order*> getOrdersList();
+
+    //set ordersList
+    void setOrdersList(vector<Order*>& ordersList);
 
     //inserts an order at the end of the list
     void insertOrder(Order *order);
@@ -72,10 +72,13 @@ public:
     void printOrders();
 };
 
+/* Deploy Class */
+
 class Deploy : public Order {
 private:
-    string name = "Deploy";
+    string name;
     string territory;
+    string player;
     int armies;
 public:
     //default constructor
@@ -85,12 +88,7 @@ public:
     Deploy(const Deploy &deploy);
 
     //parameterized constructor
-    Deploy(string territory, int armies);
-
-    //destructor
-    ~Deploy() {
-        delete this;
-    }
+    Deploy(string player, string territory, int armies);
 
     //validate order
     bool validate();
@@ -104,19 +102,31 @@ public:
     //get territory
     string getTerritory();
 
+    //get playerOrder
+    string getPlayer();
+
     //get armies
     int getArmies();
+
+    //set player
+    void setPlayer(string player);
 
     //set territory
     void setTerritory(string territory);
 
     //set armies
     void setArmies(int armies);
+
+    //set names
+    void setName(string name);
+
 };
 
+/* Advance Class */
 class Advance : public Order {
 private:
-    string name = "Advance";
+    string name;
+    string player;
     string source;
     string target;
     int armies;
@@ -128,12 +138,7 @@ public:
     Advance(const Advance &advance);
 
     //parameterized constructor
-    Advance(string source, string target, int armies);
-
-    //destructor
-    ~Advance() {
-        delete this;
-    }
+    Advance(string player, string source, string target, int armies);
 
     //validate order
     bool validate();
@@ -143,6 +148,9 @@ public:
 
     //get name
     string getName();
+
+    //get playerOrder
+    string getPlayer();
 
     //get source
     string getSource();
@@ -153,6 +161,9 @@ public:
     //get armies
     int getArmies();
 
+    //set playerOrder
+    void setPlayer(string playerOrder);
+
     //set source
     void setSource(string source);
 
@@ -161,11 +172,16 @@ public:
 
     //set armies
     void setArmies(int armies);
+
+    //set names
+    void setName(string name);
 };
 
+/* Bomb Class*/
 class Bomb : public Order {
 private:
-    string name = "Bomb";
+    string name;
+    string player;
     string territory;
 public:
     //default constructor
@@ -175,12 +191,7 @@ public:
     Bomb(const Bomb &bomb);
 
     //parameterized constructor
-    Bomb(string territory);
-
-    //destructor
-    ~Bomb() {
-        delete this;
-    }
+    Bomb(string player, string territory);
 
     //validate order
     bool validate();
@@ -191,17 +202,29 @@ public:
     //get name
     string getName();
 
+    //get playerOrder
+    string getPlayer();
+
     //get territory
     string getTerritory();
+
+    //set playerOrder
+    void setPlayer(string playerOrder);
 
     //set territory
     void setTerritory(string territory);
 
+    //set names
+    void setName(string name);
+
 };
+
+/* Blockade Class*/
 
 class Blockade : public Order {
 private:
-    string name = "Blockade";
+    string name;
+    string player;
     string territory;
 public:
     //default constructor
@@ -211,12 +234,7 @@ public:
     Blockade(const Blockade &blockade);
 
     //parameterized constructor
-    Blockade(string territory);
-
-    //destructor
-    ~Blockade() {
-        delete this;
-    }
+    Blockade(string player, string territory);
 
     //validate order
     bool validate();
@@ -227,17 +245,27 @@ public:
     //get name
     string getName();
 
+    //get playerOrder
+    string getPlayer();
+
     //get territory
     string getTerritory();
 
+    //set player
+    void setPlayer(string playerOrder);
+
     //set territory
     void setTerritory(string territory);
+
+    //set names
+    void setName(string name);
 
 };
 
 class Airlift : public Order {
 private:
-    string name= "Airlift";
+    string name;
+    string player;
     string source;
     string target;
     int armies;
@@ -249,12 +277,7 @@ public:
     Airlift(const Airlift &airlift);
 
     //parameterized constructor
-    Airlift(string source, string target, int armies);
-
-    //destructor
-    ~Airlift() {
-        delete this;
-    }
+    Airlift(string player, string source, string target, int armies);
 
     //validate order
     bool validate();
@@ -265,6 +288,9 @@ public:
     //get name
     string getName();
 
+    //get playerOrder
+    string getPlayer();
+
     //get source
     string getSource();
 
@@ -274,6 +300,9 @@ public:
     //get armies
     int getArmies();
 
+    //set playerOrder
+    void setPlayer(string playerOrder);
+
     //set source
     void setSource(string source);
 
@@ -282,11 +311,14 @@ public:
 
     //set armies
     void setArmies(int armies);
+
+    //set names
+    void setName(string name);
 };
 
 class Negotiate : public Order {
 private:
-    string name = "Negotiate";
+    string name;
     string player1;
     string player2;
 public:
@@ -298,11 +330,6 @@ public:
 
     //parameterized constructor
     Negotiate(string player1, string player2);
-
-    //destructor
-    ~Negotiate() {
-        delete this;
-    }
 
     //validate order
     bool validate();
@@ -324,6 +351,10 @@ public:
 
     //set player2
     void setPlayer2(string player2);
+
+    //set names
+    void setName(string name);
+
 };
 
 #endif //WARZONE_ORDERS_H
