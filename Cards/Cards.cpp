@@ -42,6 +42,9 @@ void Card::play() {
         case CardType::DIPLOMACY:
             cardName = "Diplomacy";
             break;
+        default: 
+            cardName = "Unknown"; 
+            break;  // Default case for unexpected card type values
     }
     std::cout << "Playing a card of type: " << cardName << std::endl;
 }
@@ -64,6 +67,9 @@ std::ostream& operator<<(std::ostream& os, const Card& card) {
         case CardType::DIPLOMACY:
             cardName = "Diplomacy";
             break;
+        default: 
+            cardName = "Unknown"; 
+            break;  // Default case for unexpected card type values
     }
     os << "Card Type: " << cardName;
     return os;
