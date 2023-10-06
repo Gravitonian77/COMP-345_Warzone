@@ -1,6 +1,0 @@
-[Continents]
-This is a non Map file
-Comp345
-HelloWorld!
-
-[Territories]
