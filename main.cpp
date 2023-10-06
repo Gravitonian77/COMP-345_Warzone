@@ -5,6 +5,7 @@
 #include "Map/Map.cpp"
 
 int main() {
+    testLoadMaps();
     testPlayers();
     testCards();
     testOrdersLists();
