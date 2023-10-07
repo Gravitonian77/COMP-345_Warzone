@@ -96,12 +96,9 @@ public:
 	void processCommand(string command);
 	State* newState(string stateName);
 
+	
 };
-
+void testGameStates();
 #endif //UNTITLED_GAMEENGINE_H
 
-class GameEngineDriver{
 
-	void testGameStates();
-
-};
