@@ -1,60 +1,50 @@
-#pragma once 
+#pragma once
 
-#include "../Map/Map.h"
-#include "../Cards/Cards.h"
-#include "../Orders/Orders.h"
-
+#include "Map.h"
 #include <vector>
+#include <string>
+#include <list>
 #include <iostream>
+
 using namespace std;
 
 class Territory;
-class Orders;
-class OrdersList;
-class Hand;
-
-
 
 class Player {
 private:
     // Attributes
     static int nextPlayerNumber;
-    int* playerNumber; 
+    int* playerNumber;
     vector<Territory*> myTerritories;
-    Hand* myCards;                             
-    OrdersList* myOrders;    
+    list<string> myCards;    
+    list<string> myOrders;   
 
 public:
-
-    //Constructors 
+    // Constructors
     Player();
-    Player(std::vector<Territory *> territories, Hand* cards, OrdersList* orders);
+    Player(vector<Territory*> territories, const list<string>& cards, const list<string>& orders); // Updated constructor
     Player(const Player& player);
-    
-    //Destructor
+
+    // Destructor
     ~Player();
 
-    //Accesors
+    // Accessors
     int getPlayerNumber() const;
-    vector<Territory *> getMyTerritories() const; 
-    Hand* getCards() const; 
-    OrdersList* getOrders() const; 
+    vector<Territory*> getMyTerritories() const;
+    list<string> getCards() const;
+    list<string> getOrders() const;
 
     // Add territory to the player's list
     void addTerritory(Territory* territory);
 
-    //Assignment operator
+    // Assignment operator
     Player& operator=(const Player& other);
 
-    //Stream Insertion Operator
+    // Stream Insertion Operator
     friend ostream& operator<<(ostream& out, const Player& player);
 
-    //Methods Required
+    // Methods Required
     vector<Territory*> ToDefend();
     vector<Territory*> ToAttack();
-    void issueOrder(Order* order);
-
-
+    void issueOrder(const string& order); // Updated method to accept a string
 };
-
-int Player::nextPlayerNumber = 1;
