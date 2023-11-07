@@ -161,6 +161,10 @@ void Hand::playAll(Deck& deck) {
     cards.clear();
 }
 
+std::vector<Card*> Hand::getCards() const {
+    return cards; // Correctly return the member variable 'cards'
+}
+
 void testCards() {  // Function definition added here
     Deck deck;
     Hand hand;
