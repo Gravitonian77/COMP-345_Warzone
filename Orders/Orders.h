@@ -33,6 +33,9 @@ public:
     bool getExecuted();
     void setEffect(string effect);
     string getEffect();
+
+    // stream insertion operator
+    friend ostream& operator<<(ostream& out, const Order& order);
 };
 
 class OrdersList {
@@ -48,6 +51,9 @@ public:
 
     //parameterized constructor
     OrdersList(Player* player, vector<Order *>& ordersList);
+
+    // stream insertion operator
+    friend ostream& operator<<(ostream& out, const OrdersList& ordersList);
 
     //set player
     void setPlayer(Player player);
@@ -93,6 +99,9 @@ public:
     //destructors
     ~Deploy();
 
+    // stream insertion operator
+    friend ostream& operator<<(ostream& out, const Deploy& deploy);
+
     //validate order
     bool validate();
 
@@ -110,6 +119,9 @@ public:
 
     //get armies
     int getArmies();
+
+    // get executed
+    bool getExecuted();
 
     //set playerOrder
     void setPlayer(Player* playerOrder);
@@ -144,6 +156,9 @@ public:
 
     //destructors
     ~Advance();
+
+    //stream insertion operator
+    friend ostream& operator<<(ostream& out, const Advance& advance);
 
     //validate order
     bool validate();
@@ -201,6 +216,9 @@ public:
     //destructors
     ~Bomb();
 
+    //stream insertion operator
+    friend ostream& operator<<(ostream& out, const Bomb& bomb);
+
     //validate order
     bool validate();
 
@@ -247,6 +265,9 @@ public:
     //destructors
     ~Blockade();
 
+    //stream insertion operator
+    friend ostream& operator<<(ostream& out, const Blockade& blockade);
+
     //validate order
     bool validate();
 
@@ -291,6 +312,9 @@ public:
 
     //destructors
     ~Airlift();
+
+    //stream insertion operator
+    friend ostream& operator<<(ostream& out, const Airlift& airlift);
 
     //validate order
     bool validate();
@@ -346,6 +370,9 @@ public:
 
     //destructors
     ~Negotiate();
+
+    //stream insertion operator
+    friend ostream& operator<<(ostream& out, const Negotiate& negotiate);
 
     //validate order
     bool validate();
