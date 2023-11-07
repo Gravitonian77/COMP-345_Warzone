@@ -44,6 +44,7 @@ public:
     ~Hand();
     void addCard(Card* card);
     void playAll(Deck& deck);
+    std::vector<Card*> getCards() const;
 };
 
 void testCards();  // Function declaration added here
