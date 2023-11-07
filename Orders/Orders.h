@@ -7,9 +7,10 @@
 
 #include <iostream>
 #include <vector>
+#include "../Player/Player.h"
+#include "../Map/Map.h"
 
 using namespace std;
-
 
 class Order {
 private:
@@ -36,7 +37,7 @@ public:
 
 class OrdersList {
 private:
-    string player;
+    Player* player;
 public:
     vector<Order*> ordersList;
     //default constructor
@@ -46,13 +47,13 @@ public:
     OrdersList(const OrdersList &ordersList);
 
     //parameterized constructor
-    OrdersList(string player, vector<Order *>& ordersList);
+    OrdersList(Player* player, vector<Order *>& ordersList);
 
     //set player
-    void setPlayer(string player);
+    void setPlayer(Player player);
 
     //get player
-    string getPlayer();
+    Player getPlayer();
 
     //get ordersList
     vector<Order*> getOrdersList();
@@ -61,7 +62,7 @@ public:
     void setOrdersList(vector<Order*>& ordersList);
 
     //inserts an order at the end of the list
-    void insertOrder(Order *order);
+    void insertOrder(Order* order);
 
     // move order from current position to new position
     void moveOrder(int currentPosition, int newPosition);
@@ -73,13 +74,12 @@ public:
 };
 
 /* Deploy Class */
-
 class Deploy : public Order {
 private:
-    string name;
-    string territory;
-    string player;
-    int armies;
+    string name = "Deploy";
+    Territory* target;
+    Player* player;
+    int numberOfArmies;
 public:
     //default constructor
     Deploy();
@@ -88,7 +88,10 @@ public:
     Deploy(const Deploy &deploy);
 
     //parameterized constructor
-    Deploy(string player, string territory, int armies);
+    Deploy(Player* player, Territory* target, int armies);
+
+    //destructors
+    ~Deploy();
 
     //validate order
     bool validate();
@@ -99,37 +102,36 @@ public:
     //get name
     string getName();
 
-    //get territory
-    string getTerritory();
-
     //get playerOrder
-    string getPlayer();
+    Player* getPlayer();
+
+    //get target
+    Territory* getTarget();
 
     //get armies
     int getArmies();
 
-    //set player
-    void setPlayer(string player);
+    //set playerOrder
+    void setPlayer(Player* playerOrder);
 
-    //set territory
-    void setTerritory(string territory);
+    //set target
+    void setTarget(Territory* target);
 
     //set armies
     void setArmies(int armies);
 
     //set names
     void setName(string name);
-
 };
 
 /* Advance Class */
 class Advance : public Order {
 private:
-    string name;
-    string player;
-    string source;
-    string target;
-    int armies;
+    string name = "Advance";
+    Player* player;
+    Territory* source;
+    Territory* target;
+    int numberOfArmies;
 public:
     //default constructor
     Advance();
@@ -138,7 +140,10 @@ public:
     Advance(const Advance &advance);
 
     //parameterized constructor
-    Advance(string player, string source, string target, int armies);
+    Advance(Player* player, Territory* source, Territory* target, int numberOfArmies);
+
+    //destructors
+    ~Advance();
 
     //validate order
     bool validate();
@@ -150,25 +155,25 @@ public:
     string getName();
 
     //get playerOrder
-    string getPlayer();
+    Player* getPlayer();
 
     //get source
-    string getSource();
+    Territory* getSource();
 
     //get target
-    string getTarget();
+    Territory* getTarget();
 
     //get armies
     int getArmies();
 
     //set playerOrder
-    void setPlayer(string playerOrder);
+    void setPlayer(Player* playerOrder);
 
     //set source
-    void setSource(string source);
+    void setSource(Territory* source);
 
     //set target
-    void setTarget(string target);
+    void setTarget(Territory* target);
 
     //set armies
     void setArmies(int armies);
@@ -180,9 +185,9 @@ public:
 /* Bomb Class*/
 class Bomb : public Order {
 private:
-    string name;
-    string player;
-    string territory;
+    string name="Bomb";
+    Player* player;
+    Territory* target;
 public:
     //default constructor
     Bomb();
@@ -191,7 +196,10 @@ public:
     Bomb(const Bomb &bomb);
 
     //parameterized constructor
-    Bomb(string player, string territory);
+    Bomb(Player* player, Territory* target);
+
+    //destructors
+    ~Bomb();
 
     //validate order
     bool validate();
@@ -203,16 +211,16 @@ public:
     string getName();
 
     //get playerOrder
-    string getPlayer();
+    Player* getPlayer();
 
-    //get territory
-    string getTerritory();
+    //get target
+    Territory* getTarget();
 
     //set playerOrder
-    void setPlayer(string playerOrder);
+    void setPlayer(Player* playerOrder);
 
-    //set territory
-    void setTerritory(string territory);
+    //set target
+    void setTarget(Territory* target);
 
     //set names
     void setName(string name);
@@ -223,9 +231,9 @@ public:
 
 class Blockade : public Order {
 private:
-    string name;
-    string player;
-    string territory;
+    string name = "Blockade";
+    Player* player;
+    Territory* target;
 public:
     //default constructor
     Blockade();
@@ -234,7 +242,10 @@ public:
     Blockade(const Blockade &blockade);
 
     //parameterized constructor
-    Blockade(string player, string territory);
+    Blockade(Player* player, Territory* target);
+
+    //destructors
+    ~Blockade();
 
     //validate order
     bool validate();
@@ -246,29 +257,28 @@ public:
     string getName();
 
     //get playerOrder
-    string getPlayer();
+    Player* getPlayer();
 
-    //get territory
-    string getTerritory();
+    //get target
+    Territory* getTarget();
 
-    //set player
-    void setPlayer(string playerOrder);
+    //set playerOrder
+    void setPlayer(Player* playerOrder);
 
-    //set territory
-    void setTerritory(string territory);
+    //set target
+    void setTarget(Territory* target);
 
     //set names
     void setName(string name);
-
 };
 
 class Airlift : public Order {
 private:
-    string name;
-    string player;
-    string source;
-    string target;
-    int armies;
+    string name = "Airlift";
+    Player* player;
+    Territory* source;
+    Territory* target;
+    int NumberOfArmies;
 public:
     //default constructor
     Airlift();
@@ -277,7 +287,10 @@ public:
     Airlift(const Airlift &airlift);
 
     //parameterized constructor
-    Airlift(string player, string source, string target, int armies);
+    Airlift(Player* player, Territory* source, Territory* target, int numberOfArmies);
+
+    //destructors
+    ~Airlift();
 
     //validate order
     bool validate();
@@ -289,28 +302,28 @@ public:
     string getName();
 
     //get playerOrder
-    string getPlayer();
+    Player* getPlayer();
 
     //get source
-    string getSource();
+    Territory* getSource();
 
     //get target
-    string getTarget();
+    Territory* getTarget();
 
     //get armies
-    int getArmies();
+    int getNumberOfArmies();
 
     //set playerOrder
-    void setPlayer(string playerOrder);
+    void setPlayer(Player* playerOrder);
 
     //set source
-    void setSource(string source);
+    void setSource(Territory* source);
 
     //set target
-    void setTarget(string target);
+    void setTarget(Territory* target);
 
     //set armies
-    void setArmies(int armies);
+    void setNumberOfArmies(int armies);
 
     //set names
     void setName(string name);
@@ -318,9 +331,9 @@ public:
 
 class Negotiate : public Order {
 private:
-    string name;
-    string player1;
-    string player2;
+    string name = "Negotiate";
+    Player* player1;
+    Player* player2;
 public:
     //default constructor
     Negotiate();
@@ -329,7 +342,10 @@ public:
     Negotiate(const Negotiate &negotiate);
 
     //parameterized constructor
-    Negotiate(string player1, string player2);
+    Negotiate(Player* player1, Player* player2);
+
+    //destructors
+    ~Negotiate();
 
     //validate order
     bool validate();
@@ -340,21 +356,20 @@ public:
     //get name
     string getName();
 
-    //get player1
-    string getPlayer1();
+    //get playerOrder
+    Player* getPlayer1();
 
-    //get player2
-    string getPlayer2();
+    //get playerOrder
+    Player* getPlayer2();
 
-    //set player1
-    void setPlayer1(string player1);
+    //set playerOrder
+    void setPlayer1(Player* playerOrder);
 
-    //set player2
-    void setPlayer2(string player2);
+    //set playerOrder
+    void setPlayer2(Player* playerOrder);
 
     //set names
     void setName(string name);
-
 };
 
 #endif //WARZONE_ORDERS_H
