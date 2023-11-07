@@ -113,12 +113,6 @@ void OrdersList::printOrders() {
 
 /* Implementation of Deploy Class */
 
-// stream insertion operator
-ostream& operator<<(ostream& out, const Deploy& deploy) {
-    out << "Deploy Order Executed: " << (deploy.getExecuted ? "Yes" : "No") << ", Effect: " << deploy.effect;
-    return out;
-}
-
 //parameterized constructor
 Deploy::Deploy(Player *player, Territory *target, int numberOfArmies) {
     this -> name = "Deploy";
