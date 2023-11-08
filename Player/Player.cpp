@@ -2,97 +2,193 @@
 #include <iostream>
 using namespace std;
 
+#include "Map.cpp"
+#include "Orders.cpp"
+#include "Cards.cpp"
 
 int Player::nextPlayerNumber = 1;
 
 // Constructors
-Player::Player() : playerNumber(new int(nextPlayerNumber++)) {}
+Player::Player() 
+    : playerNumber(nextPlayerNumber++), 
+      myTerritories(), 
+      myOrdersList(new OrdersList()), 
+      reinforcementPool(0), 
+      myHand(new Hand()) 
+{}
 
-Player::Player(vector<Territory*> territories, const list<string>& cards, const list<string>& orders)
-    : playerNumber(new int(nextPlayerNumber++)), myTerritories(territories), myCards(cards), myOrders(orders) {}
+
+Player::Player(vector<Territory*> territories, OrdersList* ordersList, Hand* hand)
+    : playerNumber(nextPlayerNumber++),
+      myTerritories(), // initialize to an empty vector
+      myOrdersList(new OrdersList(*ordersList)), // deep copy orders list
+      myHand(new Hand(*hand)) // deep copy hand
+{
+    // Deep copy each territory
+    for (Territory* territory : territories) {
+        myTerritories.push_back(new Territory(*territory));
+    }
+}
 
 Player::Player(const Player& player)
-    : playerNumber(new int(nextPlayerNumber++)), myTerritories(player.myTerritories), myCards(player.myCards), myOrders(player.myOrders) {}
+    : playerNumber(nextPlayerNumber++), 
+      myTerritories(), // Create an empty vector for territories
+      myOrdersList(new OrdersList(*(player.myOrdersList))), // Deep copy of orders list
+      reinforcementPool(player.reinforcementPool), // Copy reinforcement pool value
+      myHand(new Hand(*(player.myHand))) // Deep copy of hand
+{
+    // Deep copy each territory
+    for (Territory* territory : player.myTerritories) {
+        myTerritories.push_back(new Territory(*territory));
+    }
+}
+
 
 // Destructor
 Player::~Player() {
-    delete playerNumber;
-
-    for (Territory* t : myTerritories) {
-        delete t;
-        t = nullptr;
+    for (auto& territory : myTerritories) {
+        if (territory != nullptr) {
+            delete territory;
+            territory = nullptr;
+        }
     }
     myTerritories.clear();
+
+    if (myOrdersList != nullptr) {
+        delete myOrdersList;
+        myOrdersList = nullptr;
+    }
+
+    if (myHand != nullptr) {
+        delete myHand;
+        myHand = nullptr;
+    }
 }
+
+
 
 // Accessors
 int Player::getPlayerNumber() const {
-    return *playerNumber;
+    return playerNumber;
+}
+
+int Player::getReinforcementPool() const{
+    return reinforcementPool;
 }
 
 vector<Territory*> Player::getMyTerritories() const {
     return myTerritories;
 }
 
-list<string> Player::getCards() const {
-    return myCards;
+OrdersList* Player::getMyOrdersList() const{
+    return myOrdersList;
 }
 
-list<string> Player::getOrders() const {
-    return myOrders;
+Hand* Player::getMyHand() const {
+    return myHand;
 }
+
+
+// Mutators
+void Player::setReinforcementPool(int pool){
+    reinforcementPool = pool;
+}
+
+void  Player::setMyTerritories(vector<Territory*>& newTerritories){
+    myTerritories = newTerritories;
+}
+
+void Player::setMyOrdersList(OrdersList* newOrdersList){
+    myOrdersList = newOrdersList;
+}
+
+void Player::setMyHand(Hand *newHand){
+    myHand = newHand;
+}
+
 
 // Add territory
 void Player::addTerritory(Territory* territory) {
     myTerritories.push_back(territory);
-
     territory->setPlayer(this);
-    cout << "Territory " << territory->getTerritoryName() << " was assigned to player " << *territory->getOwner()->playerNumber << "\n";
+    cout << "Territory " << territory->getTerritoryName() << " was assigned to player " << getPlayerNumber() << "\n";
 }
 
-// Assignment operator
+
+// Remove territory
+void Player::removeTerritory(Territory* territory) {
+    auto it = std::find(myTerritories.begin(), myTerritories.end(), territory);
+    if (it != myTerritories.end()) {
+        // Territory found, print its name
+        cout << "Territory " << (*it)->getTerritoryName() << " was removed from player " << getPlayerNumber() << "\n";
+        // Remove the territory
+        myTerritories.erase(it);
+    } else {
+        // Territory not found, print a different message if needed
+        cout << "Territory not found in player's territory list.\n";
+    }
+}
+
+
 Player& Player::operator=(const Player& other) {
-    if (this == &other) {
-        return *this;
+    if (this != &other) {
+        // Deep copy of hand and orders list
+        Hand* newHand = nullptr;
+        OrdersList* newOrdersList = nullptr;
+        if (other.myHand) {
+            newHand = new Hand(*(other.myHand));
+        }
+        if (other.myOrdersList) {
+            newOrdersList = new OrdersList(*(other.myOrdersList));
+        }
+
+        // Clean up existing resources
+        delete myHand;
+        delete myOrdersList;
+
+       
+        vector<Territory*> newTerritories;
+        for (Territory* territory : other.myTerritories) {
+            newTerritories.push_back(new Territory(*territory)); // Deep copy each territory
+        }
+
+        // Delete the old territories if you have ownership
+        for (Territory* territory : myTerritories) {
+            delete territory;
+        }
+
+        
+        myHand = newHand;
+        myOrdersList = newOrdersList;
+        myTerritories = newTerritories;
+
+        reinforcementPool = other.reinforcementPool;
+
+        // Note: playerNumber is unique and not copied
     }
-
-    // Copy myTerritories
-    for (Territory* t : myTerritories) {
-        delete t;
-    }
-    myTerritories.clear();
-    for (Territory* t : other.myTerritories) {
-        myTerritories.push_back(new Territory(*t));
-    }
-
-    // Copy cards
-    myCards = other.myCards;
-
-    // Copy orders
-    myOrders = other.myOrders;
-
     return *this;
 }
 
-// Stream Insertion Operator
+
+//Stream Insertion Operator
 ostream& operator<<(ostream& out, const Player& player) {
     out << "Player Number: " << player.getPlayerNumber() << endl;
 
-    out << "My Territories: ";
+    out << "Territories: ";
     for (const Territory* territory : player.getMyTerritories()) {
         out << territory->getTerritoryName() << ", ";
     }
     out << endl;
 
     out << "Cards: ";
-    for (const string& card : player.getCards()) {
-        out << card << ", ";
+    for (const Card* card : player.getMyHand()->getCards()) {
+        out << card->getType() << ", ";
     }
     out << endl;
 
     out << "Orders: ";
-    for (const string& order : player.getOrders()) {
-        out << order << ", ";
+    for (const Order* order : player.getMyOrdersList()->getOrdersList()) {
+        out << order->getEffect() << ", ";
     }
     out << endl;
 
@@ -141,30 +237,61 @@ vector<Territory*> Player::ToAttack() {
     return territoriesToAttack;
 }
 
-void Player::issueOrder(const string& order) {
-    // Order is either to Attack or to Defend
-    if (order.find("Attack") != string::npos || order.find("Defend") != string::npos) {
-        myOrders.push_back(order);
+
+
+void Player::issueOrder(Order* order) {
+    if (order != nullptr) {
+        // Check for the specific type of order, you may need dynamic_cast here if you have derived classes
+        if (order->getEffect() == "Deploy" || order->getEffect() == "Advance" || 
+            order->getEffect() == "Bomb" || order->getEffect() == "Blockade" || 
+            order->getEffect() == "Airlift" || order->getEffect() == "Negotiate") {
+            myOrdersList->insertOrder(order);
+        } else {
+            cout << "The order: " << order->getEffect() << " is not recognized." << endl;
+        }
     } else {
-        cout << "The order: " << order << " is invalid. Order must be either Attack or Defend." << endl;
+        cout << "The order pointer is null." << endl;
     }
 }
 
+
 void testPlayers() {
+
+    cout << "---------------------- Start of Player -------------- \n";
     // Create the map 
     Map* gameMap = mapLoader::createMapFromConquestFile("Canada.map");
 
     // Players
     Player* p1 = new Player();
-    p1->addTerritory(gameMap->getContinent()[0]->getTerritories()[0]); // 1,548,116,Northern Islands,2,12
-    p1->addTerritory(gameMap->getContinent()[0]->getTerritories()[1]); // 2,510,124,Northern Islands,1,3
+    OrdersList* playerOrders = new OrdersList();
+    Hand* playerHand = new Hand();
 
-    Player* p2 = new Player();
-    p2->addTerritory(gameMap->getContinent()[0]->getTerritories()[2]); // 3,487,139,Northern Islands,2,4
-    p2->addTerritory(gameMap->getContinent()[0]->getTerritories()[3]); // 4,463,136,Northern Islands,3,5
+    // add territories
+    Territory* territory1 = gameMap->getContinent()[0]->getTerritories()[0]; // 1,548,116,Northern Islands,2,12
+    Territory* territory2 = gameMap->getContinent()[0]->getTerritories()[1]; // 2,510,124,Northern Islands,1,3
+    p1->addTerritory(territory1);
+    p1->addTerritory(territory2);
+   
+    // add hand
+    playerHand->addCard(new Card(CardType::BOMB));
+    playerHand->addCard(new Card(CardType::BLOCKADE));
+    p1->setMyHand(playerHand);
+
+    // add orders
+    playerOrders->insertOrder(new Order(false, "Deploy"));
+    playerOrders->insertOrder(new Order(false, "Bomb"));
+    playerOrders->insertOrder(new Order(false, "Airlift"));
+    p1->setMyOrdersList(playerOrders);
 
     cout << endl << *p1 << endl;
-    cout << *p2 << endl;
+
+    // invalid orders
+    Order* order1 = new Order(false, "Attack");
+    p1->issueOrder(order1);
+
+    // valid order
+    Order* order2 = new Order(false, "Blockade");
+    p1->issueOrder(order2);
 
     // P1 territories to attack
     cout << "Player " << p1->getPlayerNumber() << " can attack territories: ";
@@ -182,45 +309,22 @@ void testPlayers() {
     }
     cout << endl;
 
-    // P2 territories to attack
-    cout << "Player " << p2->getPlayerNumber() << " can attack territories: ";
-    vector<Territory*> toAttackp2 = p2->ToAttack();
-    for (Territory* t : toAttackp2) {
-        cout << t->getTerritoryName() << " ";
-    }
-    cout << endl;
+    // Remove a territory and print which one was removed
+    cout << "Removing territory: ";
+    p1->removeTerritory(territory1);
 
-    // P2 territories to defend
-    cout << "Player " << p2->getPlayerNumber() << " can defend territories: ";
-    vector<Territory*> toDefendp2 = p2->ToDefend();
-    for (Territory* t : toDefendp2) {
-        cout << t->getTerritoryName() << " ";
-    }
-    cout << endl << endl;
+    cout << "\nCopy Constructor \n";
+    Player* p2 = new Player(*p1);
 
-    // Add orders to players
-    p1->issueOrder("Attack Territory  12 3");   // valid
-    p1->issueOrder("Defend Territory 2");       // valid
-    p1->issueOrder("Move to Territory  12 3");  // invalid
+    cout << endl << *p2 << endl;
 
-    p2->issueOrder("Attack territory 2 5");     // valid
-    p2->issueOrder("Defend Territory 3 4");     // valid
-    p2->issueOrder("Move to Territory  2 5");  // invalid
-    
-    // Display orders
-    cout << "\nPlayer " << p1->getPlayerNumber() << " has orders: ";
-    for (const string& order : p1->getOrders()) {
-        cout << order << ", ";
-    }
-    cout << endl;
 
-    cout << "Player " << p2->getPlayerNumber() << " has orders: ";
-    for (const string& order : p2->getOrders()) {
-        cout << order << ", ";
-    }
-    cout << endl;
+   cout << "---------------------- End of Player -------------- \n";
 
     // Release memory
     delete p1;
-    delete p2;
+    p1 = nullptr;
+    delete gameMap;
+    gameMap = nullptr;
+    
 }
