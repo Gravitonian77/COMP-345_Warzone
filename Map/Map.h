@@ -47,6 +47,7 @@ class Territory
         vector<string> getTerritoryIndex();
         vector <Territory*> getAdjacentTerritories();
         Player* getOwner(); //for Player Class
+        int getNumberOfArmies(); //for Order Class
 
         //For Player class
         bool operator !=(const Territory* other);
@@ -59,6 +60,7 @@ class Territory
         void setTerritoryIndex(vector<string> inTerritoryIndex);
         void setContinentIndex(string inContinentIndex);
         void setAdjaccentTerritories(vector <Territory*> inAdjacentTerritories);
+        void setNumberOfArmies(int NumberOfArmies);
 
         //Adders
         void addAdjTerritory(Territory* t);
@@ -68,6 +70,8 @@ class Territory
 
         // OPERATOR OVERLOADS
 	    Territory& operator=(const Territory& other);
+
+    int getNumberOfArmies();
 };
 
 /**

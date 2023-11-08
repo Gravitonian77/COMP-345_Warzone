@@ -326,6 +326,11 @@ vector <Territory*> Territory::getAdjacentTerritories()
     return this->adjacentTerritories;
 }
 
+int Territory::getNumberOfArmies()
+{
+    return this->numberOfArmies;
+}
+
 Player* Territory::getOwner() // For Player class
 {
     return owner;
