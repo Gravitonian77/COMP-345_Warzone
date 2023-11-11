@@ -8,9 +8,12 @@
 #include<iostream>
 #include <map>
 using namespace std;
+#include "Player.h"
+#include "Map.h"
 
 class GameEngine;
 class State;
+class Player;
 
 
 class State{
@@ -58,6 +61,9 @@ private:
 	//Map for mapping commands with transitioning states
 	map<std::string, std::pair<State*, State*>> transitions;
 
+	vector<Player*> players; 
+	Map* map; 
+
 public:
 
 	//default constructor
@@ -95,6 +101,18 @@ public:
 	void startGame();
 	void processCommand(string command);
 	State* newState(string stateName);
+
+	Map* getMap(); // saq
+	vector <Player*> getPlayers();
+	void setMap(Map* newMap); //saq
+
+	void addPlayer(Player* player); 
+	void removePlayer(Player* player); 
+
+	void reinforcementPhase();
+	void issueOrderPhase();
+	void executeOrderPhase();
+	void mainGameLoop();
 
 	
 };
