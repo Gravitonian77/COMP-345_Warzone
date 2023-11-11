@@ -557,7 +557,7 @@ void Player::issueOrder(){
 			cout << "\nList of players in the game:" << endl;
 			for (int i = 0; i < gameEng->getPlayers().size(); i++) {
 				cout << "Player " << i << endl;
-                //cout << "Player " << myGameEngine->players.at(i)->getPlayerNumber() << endl;
+                	cout << "Player " << myGameEngine->players.at(i)->getPlayerNumber() << endl;
 			}
 			cout << endl;
 
