@@ -187,3 +187,92 @@ State* GameEngine::newState(std::string stateName) {
 	State * state = new State(stateName);
 	return state;
 }
+Map* GameEngine::getMap(){
+	return map;
+}
+vector <Player*> GameEngine::getPlayers(){
+	return players;
+}
+void GameEngine::setMap(Map* newMap){
+	this->map = newMap;
+}
+
+void GameEngine::addPlayer(Player* player){
+	players.push_back(player);
+}
+void GameEngine::removePlayer(Player* player){
+	players.erase(remove(players.begin(), players.end(), player), players.end());
+}
+/*
+ numberOfArmies = (territoriesOwned/3) rounded down
+ Continent control bonus is added to the numberOfarmies
+ Player gets either 3 armies OR or numberOfArmies + continent control bonus
+*/
+void GameEngine::reinforcementPhase() {
+	for (Player* p : players) {
+		int numberOfArmies = floor(p->toDefend().size() / 3); 
+		p->setReinforcementPool(max(3, p->getReinforcementPool() + numberOfArmies + map->continentControlBonus(p)));
+	}
+}
+
+void GameEngine::issueOrderPhase() { // Orders issued for every player in the game 
+	for (Player* p : players) {
+            p->issueOrder();    
+	}
+}
+
+void GameEngine::executeOrderPhase(){
+	for (Player* p : players){
+        OrdersList* playerOrders = p->getMyOrdersList();
+        vector<Order*> ordersToExecute;		
+		for(Order* o: p->getMyOrdersList()->getOrdersList()){
+			if (o->getName() == "Deploy"){ // game engine executes all deploy orders before any other orders
+				ordersToExecute.push_back(o);
+			}
+		}
+		for(Order* o: ordersToExecute){
+			o->execute();
+			playerOrders->removeOrder(o);
+		}
+	}
+}
+void GameEngine::mainGameLoop(){ // This loop continues until a player has all territories
+	
+	bool playerOwnsAll = false;
+	int numOfTerritoriesInMap = map->getTerritory().size();
+
+	do{
+		for (Player* p : players) {
+			// Remove player if they have no territories
+			if (p->toDefend().empty()){
+				cout << "Since player " << p->getPlayerNumber() << " has 0 territories, this player will be removed.";
+				removePlayer(p);
+			}
+			// Check if a player in the game has all territories, if yes, then that player wins the game
+			if(p->toDefend().size() == numOfTerritoriesInMap){
+				playerOwnsAll = true;
+				cout<< "Player " << p->getPlayerNumber() << " has control of all territories in the game. This player wins.";
+				string command = "win";
+				changeState(command);
+				return;
+			}
+			// if any player doesn't own all territories, continue the game
+			if(!playerOwnsAll) {
+
+			string command = "endexecorders";	
+			changeState(command); // when orders are done excuting, start reinforcement phase
+			reinforcementPhase();
+
+			command = "issueorder";
+			changeState(command); // start issue order after reinforcement phase
+			issueOrderPhase();
+
+			command = "execorder";
+			changeState(command); // exeCute orders after they have been issued
+			executeOrderPhase();
+			}
+		}
+	}while(!playerOwnsAll); // loop ends when one player has all territories in the game 
+
+
+}
