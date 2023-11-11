@@ -102,6 +102,9 @@ void OrdersList::moveOrder(int currentPosition, int newPosition) {
 void OrdersList::removeOrder(int offset) {
     ordersList.erase(ordersList.begin() + offset);
 }
+void OrdersList::removeOrder(Order* order){
+    ordersList.erase(remove(ordersList.begin(),ordersList.end(),order),ordersList.end());
+}
 
 //print orders method
 void OrdersList::printOrders() {
