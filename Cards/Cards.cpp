@@ -74,7 +74,13 @@ std::ostream& operator<<(std::ostream& os, const Card& card) {
     os << "Card Type: " << cardName;
     return os;
 }
+CardType* Card::getType() const{
+    return type;
+}
 
+string Card::getCardTypeName() const{ 
+    return cardTypeName;
+}
 // Deck Method Implementations
 Deck::Deck() {
     for(int i = 0; i < 5; ++i) {  // Assuming we create a deck with one card of each type
