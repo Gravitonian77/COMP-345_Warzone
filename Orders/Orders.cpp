@@ -809,124 +809,15 @@ void Negotiate::setName(string name) {
 
 /*---------------------------free function to test orders lists--------------------------------*/
 void testOrdersLists(){
-//    cout << "------------------------" << endl;
-//    cout << "Testing OrdersList class" << endl;
-//    cout << "------------------------" << endl;
-//    cout << endl;
-//
-//    cout << "Creating an empty OrdersList" << endl;
-//    OrdersList *ordersList = new OrdersList();
-//    cout << endl;
-//
-//    Order *order1 = new Deploy("territory1", "player1", 1);
-//    Order *order2 = new Advance("territory2", "territory3", "player2", 2);
-//    Order *order3 = new Bomb("territory4", "player3");
-//    Order *order4 = new Blockade("territory5", "player4");
-//    Order *order5 = new Airlift("territory6", "territory7", "player5", 3);
-//    Order *order6 = new Negotiate("player6", "player7");
-//
-//    cout << "Validate the Deploy Class : ";
-//    cout << order1->validate();
-//    cout << endl;
-//
-//    cout << "Execute the Deploy Class : " ;
-//    order1->execute();
-//    cout << order1->getExecuted();
-//    cout << endl;
-//
-//    cout << "Validate the Advance Class : ";
-//    cout << order2->validate();
-//    cout << endl;
-//
-//    cout << "Execute the Advance Class : " ;
-//    order2->execute();
-//    cout << order2->getExecuted();
-//    cout << endl;
-//
-//    cout << "Validate the Bomb Class : ";
-//    cout << order3->validate();
-//    cout << endl;
-//
-//    cout << "Execute the Bomb Class : " ;
-//    order3->execute();
-//    cout << order3->getExecuted();
-//    cout << endl;
-//
-//    cout << "Validate the Blockade Class : ";
-//    cout << order4->validate();
-//    cout << endl;
-//
-//    cout << "Execute the Blockade Class : " ;
-//    order4->execute();
-//    cout << order4->getExecuted();
-//    cout << endl;
-//
-//    cout << "Validate the Airlift Class : ";
-//    cout << order5->validate();
-//    cout << endl;
-//
-//    cout << "Execute the Airlift Class : " ;
-//    order5->execute();
-//    cout << order5->getExecuted();
-//    cout << endl;
-//
-//    cout << "Validate the Negotiate Class : ";
-//    cout << order6->validate();
-//    cout << endl;
-//
-//    cout << "Execute the Negotiate Class : " ;
-//    order6->execute();
-//    cout << order6->getExecuted();
-//    cout << endl;
-//
-//    cout << "Inserting 6 orders into the OrdersList" << endl;
-//    ordersList->insertOrder(order1);
-//    ordersList->insertOrder(order2);
-//    ordersList->insertOrder(order3);
-//    ordersList->insertOrder(order4);
-//    ordersList->insertOrder(order5);
-//    ordersList->insertOrder(order6);
-//    cout << endl;
-//
-//    cout << "Printing the OrdersList: ";
-//    ordersList->printOrders();
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Removing the second order from the OrdersList..." ;
-//    ordersList->removeOrder(1);
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Printing the OrdersList: ";
-//    ordersList->printOrders();
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Moving the first order to the third position in the OrdersList...";
-//    ordersList->moveOrder(1, 2);
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Printing the OrdersList: ";
-//    ordersList->printOrders();
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Delete second order to the OrdersList...";
-//    ordersList->removeOrder(1);
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Printing the OrdersList: ";
-//    ordersList->printOrders();
-//    cout << endl;
-//    cout << endl;
-//
-//    cout << "Delete the whole OrdersList..." << endl;
-//    delete ordersList;
-//    cout << endl;
-//    cout << endl;
+    cout << "------------------------" << endl;
+    cout << "Testing OrdersList class" << endl;
+    cout << "------------------------" << endl;
+    cout << endl;
+
+    // load map
+
+
+
 }
 
 

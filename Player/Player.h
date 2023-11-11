@@ -13,8 +13,8 @@ using namespace std;
 // Forward declaration
 class Territory;
 class Hand;
+class Orders;
 class OrdersList;
-class GameEngine;
 
 class Player {
 private:
@@ -25,12 +25,11 @@ private:
 	OrdersList* myOrdersList;
 	int reinforcementPool; 
 	Hand* myHand; 
-    GameEngine* myGameEngine;
 
 public:
     // Constructors
     Player();
-    Player(vector<Territory*> territories, OrdersList* ordersList, Hand* hand);
+    Player(vector<Territory*> territories, OrdersList* ordersList, Hand* hand); // Updated constructor
     Player(const Player& player);
 
     // Destructor
@@ -42,18 +41,12 @@ public:
     vector<Territory*> getMyTerritories() const;
     OrdersList* getMyOrdersList() const;
     Hand* getMyHand() const; 
-    GameEngine* getMyGameEngine()const;
-
 	
     // Mutators
     void setReinforcementPool(int pool);
     void setMyTerritories(vector<Territory*>& newTerritories);
     void setMyOrdersList(OrdersList* newOrdersList);
     void setMyHand(Hand* newHand);
-    void setGameEngine(GameEngine* game);
-
-    // Owns territory
-    bool ownsTerritory(string territoryName);
 
     // Add/Remove territory to the player's list
     void addTerritory(Territory* territory);
@@ -68,5 +61,5 @@ public:
     // Methods Required
     vector<Territory*> toDefend();
     vector<Territory*> toAttack();
-    void issueOrder(); 
+    void issueOrder();
 };
