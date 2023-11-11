@@ -70,8 +70,6 @@ class Territory
 
         // OPERATOR OVERLOADS
 	    Territory& operator=(const Territory& other);
-
-    int getNumberOfArmies();
 };
 
 /**

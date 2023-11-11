@@ -82,7 +82,7 @@ public:
 /* Deploy Class */
 class Deploy : public Order {
 private:
-    string name = "Deploy";
+    string name;
     Territory* target;
     Player* player;
     int numberOfArmies;
@@ -139,7 +139,7 @@ public:
 /* Advance Class */
 class Advance : public Order {
 private:
-    string name = "Advance";
+    string name;
     Player* player;
     Territory* source;
     Territory* target;
@@ -200,7 +200,7 @@ public:
 /* Bomb Class*/
 class Bomb : public Order {
 private:
-    string name="Bomb";
+    string name;
     Player* player;
     Territory* target;
 public:
@@ -249,7 +249,7 @@ public:
 
 class Blockade : public Order {
 private:
-    string name = "Blockade";
+    string name;
     Player* player;
     Territory* target;
 public:
@@ -295,7 +295,7 @@ public:
 
 class Airlift : public Order {
 private:
-    string name = "Airlift";
+    string name;
     Player* player;
     Territory* source;
     Territory* target;
@@ -355,9 +355,9 @@ public:
 
 class Negotiate : public Order {
 private:
-    string name = "Negotiate";
-    Player* player1;
-    Player* player2;
+    string name;
+    Player* sourcePlayer;
+    Player* targetPlayer;
 public:
     //default constructor
     Negotiate();
@@ -366,7 +366,7 @@ public:
     Negotiate(const Negotiate &negotiate);
 
     //parameterized constructor
-    Negotiate(Player* player1, Player* player2);
+    Negotiate(Player* sourcePlayer, Player* targetPlayer);
 
     //destructors
     ~Negotiate();
@@ -384,16 +384,16 @@ public:
     string getName();
 
     //get playerOrder
-    Player* getPlayer1();
+    Player* getSourcePlayer();
 
-    //get playerOrder
-    Player* getPlayer2();
-
-    //set playerOrder
-    void setPlayer1(Player* playerOrder);
+    //get target
+    Player* getTargetPlayer();
 
     //set playerOrder
-    void setPlayer2(Player* playerOrder);
+    void setSourcePlayer(Player* sourcePlayer);
+
+    //set target
+    void setTargetPlayer(Player* targetPlayer);
 
     //set names
     void setName(string name);
