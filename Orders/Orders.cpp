@@ -6,8 +6,7 @@
 
 using namespace std;
 
-/* Implementation of Orders Class */
-
+/*---------------------------------Implementation of Orders Class---------------------------------*/
 //default constructor
 Order::Order() {
     executed = false;
@@ -62,8 +61,7 @@ string Order::getEffect() {
 }
 
 
-/* Implementation of OrdersList Class */
-
+/*---------------------------------Implementation of OrdersList Class--------------------------------- */
 //copy constructor
 OrdersList::OrdersList(const OrdersList &ordersList) {
     player = ordersList.player;
@@ -102,6 +100,7 @@ void OrdersList::moveOrder(int currentPosition, int newPosition) {
 void OrdersList::removeOrder(int offset) {
     ordersList.erase(ordersList.begin() + offset);
 }
+
 void OrdersList::removeOrder(Order* order){
     ordersList.erase(remove(ordersList.begin(),ordersList.end(),order),ordersList.end());
 }
@@ -114,7 +113,23 @@ void OrdersList::printOrders() {
     cout << endl;
 }
 
-/* Implementation of Deploy Class */
+/*---------------------------------Implementation of Deploy Class---------------------------------*/
+//default constructor
+Deploy::Deploy() {
+    name = "Deploy";
+    target = nullptr;
+    player = nullptr;
+    numberOfArmies = 0;
+}
+
+//copy constructor
+Deploy::Deploy(const Deploy &deploy) {
+    name = deploy.name;
+    target = deploy.target;
+    player = deploy.player;
+    numberOfArmies = deploy.numberOfArmies;
+}
+
 //parameterized constructor
 Deploy::Deploy(Player *player, Territory *target, int numberOfArmies) {
     this -> name = "Deploy";
@@ -123,26 +138,24 @@ Deploy::Deploy(Player *player, Territory *target, int numberOfArmies) {
     this -> numberOfArmies = numberOfArmies;
 }
 
+// destructor
+Deploy::~Deploy() {
+    delete target;
+    delete player;
+}
+
+//stream insertion operator overloading for Deploy class
+ostream &operator<<(ostream &out, const Deploy &deploy) {
+    out << deploy.name << " " << deploy.target << " " << deploy.player << " " << deploy.numberOfArmies;
+    return out;
+}
+
 //validate method
 bool Deploy::validate() {
-    if (target==nullptr){
-        cout<< "Deploy order is invalid because the target territory is null" << endl;
-        return false;
-    }
-    if (getExecuted()){
-        cout<< "Deploy order is invalid because it has already been executed" << endl;
-        return false;
-    }
-
-    // check if the territory belongs to the player
+    // If the target territory does not belong to the player that issued the order,
+    // the order is invalid.
     if (target->getOwner() != player){
         cout<< "Deploy order is invalid because the target territory does not belong to the player" << endl;
-        return false;
-    }
-
-    // check if the number of armies is greater than 0
-    if (numberOfArmies <= 0){
-        cout<< "Deploy order is invalid because the number of armies is less than or equal to 0" << endl;
         return false;
     }
     cout<< "Deploy order is valid" << endl;
@@ -152,6 +165,9 @@ bool Deploy::validate() {
 //execute method
 void Deploy::execute() {
     if (validate()){
+        // If the target territory belongs to the player that issued the deploy order,
+        // the selected number of army units is added to the number of army units on that territory
+        player->setReinforcementPool(player->getReinforcementPool()-this->numberOfArmies);
         int numberOfArmies = target->getNumberOfArmies()+this->numberOfArmies;
         target->setNumberOfArmies(numberOfArmies);
         setExecuted(true);
@@ -159,7 +175,65 @@ void Deploy::execute() {
     }
 }
 
-/* Implementation of Advance Class */
+//get name
+string Deploy::getName() {
+    return name;
+}
+
+//get player
+Player *Deploy::getPlayer() {
+    return player;
+}
+
+//get target
+Territory *Deploy::getTarget() {
+    return target;
+}
+
+//get armies
+int Deploy::getArmies() {
+    return numberOfArmies;
+}
+
+//set player
+void Deploy::setPlayer(Player *player) {
+    this->player = player;
+}
+
+//set target
+void Deploy::setTarget(Territory *target) {
+    this->target = target;
+}
+
+//set armies
+void Deploy::setArmies(int armies) {
+    this->numberOfArmies = armies;
+}
+
+//set name
+void Deploy::setName(string name) {
+    this->name = name;
+}
+
+/*---------------------------------Implementation of Advance Class---------------------------------*/
+//default constructor
+Advance::Advance() {
+    name = "Advance";
+    source = nullptr;
+    target = nullptr;
+    player = nullptr;
+    numberOfArmies = 0;
+}
+
+//copy constructor
+Advance::Advance(const Advance &advance) {
+    name = advance.name;
+    source = advance.source;
+    target = advance.target;
+    player = advance.player;
+    numberOfArmies = advance.numberOfArmies;
+}
+
 //parameterized constructor
 Advance::Advance(Player *player, Territory *source, Territory *target, int numberOfArmies) {
     this -> name = "Advance";
@@ -169,57 +243,40 @@ Advance::Advance(Player *player, Territory *source, Territory *target, int numbe
     this -> numberOfArmies = numberOfArmies;
 }
 
+// destructor
+Advance::~Advance() {
+    delete source;
+    delete target;
+    delete player;
+}
+
+//stream insertion operator overloading for Advance class
+ostream &operator<<(ostream &out, const Advance &advance) {
+    out << advance.name << " " << advance.source << " " << advance.target << " " << advance.player << " " << advance.numberOfArmies;
+    return out;
+}
+
 //validate method
 bool Advance::validate() {
-    if (source==nullptr){
-        cout<< "Advance order is invalid because the source territory is null" << endl;
-        return false;
-    }
-    if (target==nullptr){
-        cout<< "Advance order is invalid because the target territory is null" << endl;
-        return false;
-    }
-    if (getExecuted()){
-        cout<< "Advance order is invalid because it has already been executed" << endl;
-        return false;
-    }
-
-    // check if the source territory belongs to the player
+    //If the source territory does not belong to the player that issued the order, the order is invalid.
     if (source->getOwner() != player){
         cout<< "Advance order is invalid because the source territory does not belong to the player" << endl;
         return false;
     }
 
-    // check if the target territory belongs to the player
-    if (target->getOwner() == player){
-        cout<< "Advance order is invalid because the target territory belongs to the player" << endl;
-        return false;
-    }
-
-    // check if the source territory is adjacent to the target territory
-    bool isAdjacent = false;
+    //If the target territory is not adjacent to the source territory, the order is invalid.
+    bool targetAdjacent = false;
     for (Territory* adjacentTerritory : source->getAdjacentTerritories()) {
         if (adjacentTerritory == target) {
-            isAdjacent = true;
+            targetAdjacent = true;
             break;
         }
     }
-    if (!isAdjacent){
-        cout<< "Advance order is invalid because the source territory is not adjacent to the target territory" << endl;
+    if (!targetAdjacent){
+        cout<< "Advance order is invalid because the target territory is not adjacent to the source territory" << endl;
         return false;
     }
 
-    // check if the number of armies is greater than 0
-    if (numberOfArmies <= 0) {
-        cout << "Advance order is invalid because the number of armies is less than or equal to 0" << endl;
-        return false;
-    }
-
-    // check if the number of armies is greater than the number of armies in the source territory
-    if (numberOfArmies > source->getNumberOfArmies()) {
-        cout << "Advance order is invalid because the number of armies is greater than the number of armies in the source territory" << endl;
-        return false;
-    }
 
     cout<< "Advance order is valid" << endl;
     return true;
@@ -300,12 +357,89 @@ void Advance::execute() {
     }
 }
 
-/* Implementation of Bomb Class */
+//get name
+string Advance::getName() {
+    return name;
+}
+
+//get player
+Player *Advance::getPlayer() {
+    return player;
+}
+
+//get source
+Territory *Advance::getSource() {
+    return source;
+}
+
+//get target
+Territory *Advance::getTarget() {
+    return target;
+}
+
+//get armies
+int Advance::getArmies() {
+    return numberOfArmies;
+}
+
+//set player
+void Advance::setPlayer(Player *player) {
+    this->player = player;
+}
+
+//set source
+void Advance::setSource(Territory *source) {
+    this->source = source;
+}
+
+//set target
+void Advance::setTarget(Territory *target) {
+    this->target = target;
+}
+
+//set armies
+void Advance::setArmies(int armies) {
+    this->numberOfArmies = armies;
+}
+
+//set name
+void Advance::setName(string name) {
+    this->name = name;
+}
+
+/*---------------------------------Implementation of Bomb Class---------------------------------*/
+
+//default constructor
+Bomb::Bomb() {
+    name = "Bomb";
+    target = nullptr;
+    player = nullptr;
+}
+
+//copy constructor
+Bomb::Bomb(const Bomb &bomb) {
+    name = bomb.name;
+    target = bomb.target;
+    player = bomb.player;
+}
+
 //parameterized constructor
 Bomb::Bomb(Player *player, Territory *target) {
     this -> name = "Bomb";
     this -> target = target;
     this -> player = player;
+}
+
+// destructor
+Bomb::~Bomb() {
+    delete target;
+    delete player;
+}
+
+//stream insertion operator overloading for Bomb class
+ostream &operator<<(ostream &out, const Bomb &bomb) {
+    out << bomb.name << " " << bomb.target << " " << bomb.player;
+    return out;
 }
 
 //validate method
@@ -346,12 +480,69 @@ void Bomb::execute() {
     }
 }
 
-/* Implementation of Blockade Class */
+//get name
+string Bomb::getName() {
+    return name;
+}
+
+//get player
+Player *Bomb::getPlayer() {
+    return player;
+}
+
+//get target
+Territory *Bomb::getTarget() {
+    return target;
+}
+
+//set player
+void Bomb::setPlayer(Player *player) {
+    this->player = player;
+}
+
+//set target
+void Bomb::setTarget(Territory *target) {
+    this->target = target;
+}
+
+//set name
+void Bomb::setName(string name) {
+    this->name = name;
+}
+
+/*---------------------------------Implementation of Blockade Class---------------------------------*/
+
+//default constructor
+Blockade::Blockade() {
+    name = "Blockade";
+    target = nullptr;
+    player = nullptr;
+}
+
+//copy constructor
+Blockade::Blockade(const Blockade &blockade) {
+    name = blockade.name;
+    target = blockade.target;
+    player = blockade.player;
+}
+
 //parameterized constructor
 Blockade::Blockade(Player *player, Territory *target) {
     this -> name = "Blockade";
     this -> target = target;
     this -> player = player;
+}
+
+// destructor
+Blockade::~Blockade() {
+    delete target;
+    delete player;
+}
+
+//stream insertion operator overloading for Blockade class
+ostream &operator<<(ostream &out, const Blockade &blockade) {
+    out << blockade.name << " " << blockade.target << " " << blockade.player;
+    return out;
 }
 
 //validate method
@@ -380,7 +571,56 @@ void Blockade::execute() {
     }
 }
 
-/* Implementation of Airlift Class */
+//get name
+string Blockade::getName() {
+    return name;
+}
+
+//get player
+Player *Blockade::getPlayer() {
+    return player;
+}
+
+//get target
+Territory *Blockade::getTarget() {
+    return target;
+}
+
+//set player
+void Blockade::setPlayer(Player *player) {
+    this->player = player;
+}
+
+//set target
+void Blockade::setTarget(Territory *target) {
+    this->target = target;
+}
+
+//set name
+void Blockade::setName(string name) {
+    this->name = name;
+}
+
+/*---------------------------------Implementation of Airlift Class---------------------------------*/
+
+//default constructor
+Airlift::Airlift() {
+    name = "Airlift";
+    source = nullptr;
+    target = nullptr;
+    player = nullptr;
+    NumberOfArmies = 0;
+}
+
+//copy constructor
+Airlift::Airlift(const Airlift &airlift) {
+    name = airlift.name;
+    source = airlift.source;
+    target = airlift.target;
+    player = airlift.player;
+    NumberOfArmies = airlift.NumberOfArmies;
+}
+
 //parameterized constructor
 Airlift::Airlift(Player *player, Territory *source, Territory *target, int numberOfArmies) {
     this -> name = "Airlift";
@@ -388,6 +628,19 @@ Airlift::Airlift(Player *player, Territory *source, Territory *target, int numbe
     this -> target = target;
     this -> player = player;
     this -> NumberOfArmies = numberOfArmies;
+}
+
+// destructor
+Airlift::~Airlift() {
+    delete source;
+    delete target;
+    delete player;
+}
+
+//stream insertion operator overloading for Airlift class
+ostream &operator<<(ostream &out, const Airlift &airlift) {
+    out << airlift.name << " " << airlift.source << " " << airlift.target << " " << airlift.player << " " << airlift.NumberOfArmies;
+    return out;
 }
 
 //validate method
@@ -404,6 +657,8 @@ bool Airlift::validate() {
 //execute method
 void Airlift::execute() {
     if (validate()){
+        // If both the source and target territories belong to the player that issue the airlift
+        // order, then the selected number of army units is moved from the source to the target territory.
         if (target->getOwner()==this->player && source->getOwner() == this->player){
             int numberOfArmies = getSource()->getNumberOfArmies()-getNumberOfArmies();
             getSource()->setNumberOfArmies(numberOfArmies);
@@ -415,12 +670,89 @@ void Airlift::execute() {
     }
 }
 
-/* Implementation of Negotiate Class */
+//get name
+string Airlift::getName() {
+    return name;
+}
+
+//get player
+Player *Airlift::getPlayer() {
+    return player;
+}
+
+//get source
+Territory *Airlift::getSource() {
+    return source;
+}
+
+//get target
+Territory *Airlift::getTarget() {
+    return target;
+}
+
+//get armies
+int Airlift::getNumberOfArmies() {
+    return NumberOfArmies;
+}
+
+//set player
+void Airlift::setPlayer(Player *player) {
+    this->player = player;
+}
+
+//set source
+void Airlift::setSource(Territory *source) {
+    this->source = source;
+}
+
+//set target
+void Airlift::setTarget(Territory *target) {
+    this->target = target;
+}
+
+//set armies
+void Airlift::setNumberOfArmies(int armies) {
+    this->NumberOfArmies = armies;
+}
+
+//set name
+void Airlift::setName(string name) {
+    this->name = name;
+}
+
+/*---------------------------------Implementation of Negotiate Class---------------------------------*/
+
+//default constructor
+Negotiate::Negotiate() {
+    name = "Negotiate";
+    sourcePlayer = nullptr;
+    targetPlayer = nullptr;
+}
+
+//copy constructor
+Negotiate::Negotiate(const Negotiate &negotiate) {
+    name = negotiate.name;
+    sourcePlayer = negotiate.sourcePlayer;
+    targetPlayer = negotiate.targetPlayer;
+}
+
 //parameterized constructor
 Negotiate::Negotiate(Player *sourcePlayer, Player *targetPlayer) {
     this->name = "Negotiate";
     this->sourcePlayer = sourcePlayer;
     this->targetPlayer = targetPlayer;
+}
+
+// destructor
+Negotiate::~Negotiate() {
+    delete sourcePlayer;
+    delete targetPlayer;
+}
+
+//stream insertion operator overloading for Negotiate class
+ostream &operator<<(ostream &out, const Negotiate &negotiate) {
+    out << negotiate.name << " " << negotiate.sourcePlayer << " " << negotiate.targetPlayer;
+    return out;
 }
 
 //validate method
@@ -445,7 +777,37 @@ void Negotiate::execute() {
     }
 }
 
-/* free function to test orders lists */
+//get name
+string Negotiate::getName() {
+    return name;
+}
+
+//get player
+Player *Negotiate::getSourcePlayer() {
+    return sourcePlayer;
+}
+
+//get target
+Player *Negotiate::getTargetPlayer() {
+    return targetPlayer;
+}
+
+//set player
+void Negotiate::setSourcePlayer(Player *sourcePlayer) {
+    this->sourcePlayer = sourcePlayer;
+}
+
+//set target
+void Negotiate::setTargetPlayer(Player *targetPlayer) {
+    this->targetPlayer = targetPlayer;
+}
+
+//set name
+void Negotiate::setName(string name) {
+    this->name = name;
+}
+
+/*---------------------------free function to test orders lists--------------------------------*/
 void testOrdersLists(){
 //    cout << "------------------------" << endl;
 //    cout << "Testing OrdersList class" << endl;

@@ -12,6 +12,7 @@
 
 using namespace std;
 
+/*---------------------------------Order Class---------------------------------*/
 class Order {
 private:
     bool executed;
@@ -38,6 +39,7 @@ public:
     friend ostream& operator<<(ostream& out, const Order& order);
 };
 
+/*---------------------------------OrdersList Class---------------------------------*/
 class OrdersList {
 private:
     Player* player;
@@ -80,7 +82,7 @@ public:
     void printOrders();
 };
 
-/* Deploy Class */
+/*---------------------------------Deploy Class---------------------------------*/
 class Deploy : public Order {
 private:
     string name;
@@ -137,7 +139,7 @@ public:
     void setName(string name);
 };
 
-/* Advance Class */
+/*---------------------------------Advance Class---------------------------------*/
 class Advance : public Order {
 private:
     string name;
@@ -198,7 +200,7 @@ public:
     void setName(string name);
 };
 
-/* Bomb Class*/
+/*---------------------------------Bomb Class---------------------------------*/
 class Bomb : public Order {
 private:
     string name;
@@ -246,8 +248,7 @@ public:
 
 };
 
-/* Blockade Class*/
-
+/*---------------------------------Blockade Class---------------------------------*/
 class Blockade : public Order {
 private:
     string name;
@@ -294,6 +295,7 @@ public:
     void setName(string name);
 };
 
+/*---------------------------------Airlift Class---------------------------------*/
 class Airlift : public Order {
 private:
     string name;
@@ -354,6 +356,7 @@ public:
     void setName(string name);
 };
 
+/*---------------------------------Negotiate Class---------------------------------*/
 class Negotiate : public Order {
 private:
     string name;
