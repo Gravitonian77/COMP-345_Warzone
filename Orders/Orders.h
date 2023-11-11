@@ -75,6 +75,7 @@ public:
 
     // remove order at position
     void removeOrder(int offset);
+    void removeOrder(Order* order);
 
     void printOrders();
 };
