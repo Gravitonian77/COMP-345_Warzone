@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
+using namespace std;
 
 enum class CardType {
     BOMB, REINFORCEMENT, BLOCKADE, AIRLIFT, DIPLOMACY
@@ -13,6 +15,7 @@ enum class CardType {
 class Card {
 private:
     CardType* type;
+    string cardTypeName;
 public:
     explicit Card(CardType type);
     Card(const Card& other);
@@ -20,6 +23,9 @@ public:
     ~Card();
     void play();
     friend std::ostream& operator<<(std::ostream& os, const Card& card);
+    CardType* getType() const; 
+    string getCardTypeName() const;
+};
 };
 
 class Deck {
