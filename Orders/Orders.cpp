@@ -2,6 +2,8 @@
 // Created by Kimsay Kong on 2023-09-27.
 //
 #include <iostream>
+#include <vector>
+#include <algorithm>
 #include "Orders.h"
 
 using namespace std;
