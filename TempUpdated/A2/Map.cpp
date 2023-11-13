@@ -286,6 +286,7 @@ Territory::Territory(string inTerritoryName, int inX, int inY, string inContinen
     this->y = inY;
     this->continentName = inContinentName;
     this->territoryIndex = inTerritoryIndex;
+    this->numberOfArmies = 0;
 }
 
 //Copy Constructor
