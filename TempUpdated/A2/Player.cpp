@@ -429,20 +429,23 @@ void Player::issueOrder(){
 
     cout << "\n\t--- Advance Phase Ends ---" << endl;
     cout << "\n\t--- Card Phase Starts ---" << endl;
- 
+    
     int cardsInHand = playerHand->getCards().size();
     // Confirm if player has cards
     if (cardsInHand > 0){
         // list cards
-        cout << "Cards in hand" << endl;
+        cout << "\nCards in hand:" << endl << endl;
         for(int i=0; i < cardsInHand; i++){
-            cout << "Index " << i << " has card of type " << playerHand->getCards().at(i)->getCardTypeName() << endl;
+            cout << "Index " << i << " has card of type " << *playerHand->getCards().at(i) << endl;
         }
         // Prompt which card to use
-        cout << "Enter the index of the card to use ";
+        cout << "\nEnter the index of the card to use ";
         int cardInd;
         cin >> cardInd;
         cout << endl;
+
+        auto it = playerHand->getCards().begin();  
+        int offset = cardInd;                       
 
         // validate correct index was entered; otherwise prompt user again until correct index entered
         while(cardInd < 0 || cardInd >= cardsInHand){
@@ -451,12 +454,10 @@ void Player::issueOrder(){
             cout << endl;
         }
         // Pointer for the card
-        Card* cardPoint = playerHand->getCards().at(cardInd);
-        
-        string cardName = cardPoint->getCardTypeName();
+        Card* cardPoint = *(it+offset);             
 
 		// Cases for each type of card to be played and its required input
-		if (cardName == "Bomb") {
+		if (*(cardPoint->getType()) == CardType::BOMB) { //cardName == "Bomb"
 			cout << "You chose BOMB card " << endl;
             cout << "Please enter the name(number) of territory you want to BOMB from the list below: " << endl;
 
@@ -478,11 +479,11 @@ void Player::issueOrder(){
 			cardPoint->play();
 			cout << "BOMB order has been issued!";
 		}
-		else if (cardName == "Reinforcement") {
+		else if (*(cardPoint->getType()) == CardType::REINFORCEMENT) {
 			cout << "You chose REINFORCEMENT card. Reinforcement order has been issued. " << endl;
 			cardPoint->play();
 		}
-		else if (cardName == "Blockade") {
+		else if (*(cardPoint->getType()) == CardType::BLOCKADE) {
 			cout << "You chose BLOCKADE card. " << endl;
             cout << "Please enter the territory number to blockade from the list below: " << endl;
 
@@ -504,7 +505,7 @@ void Player::issueOrder(){
 
 			cout << "Blockade order issued!";
 		}
-		else if (cardName == "Airlift") {
+		else if (*(cardPoint->getType()) == CardType::AIRLIFT) {
 			cout << "You chose AIRLIFT card" << endl;
             cout << "Please enter the territory number that the airlift will orginate from in the list below " << endl;
 
@@ -546,7 +547,7 @@ void Player::issueOrder(){
 			cardPoint->play();
 			cout << "Airlift order issued!";
 		}
-		else if (cardName == "Diplomacy") { 
+		else if (*(cardPoint->getType()) == CardType::DIPLOMACY) { 
 			cout << "You chose DIPLOMACY card" << endl;
 			cout << "With which player number do you want to negotiate? Select the player number from list below:" << endl;
 
@@ -576,50 +577,3 @@ void Player::issueOrder(){
     cout << "\n\t--- Card Phase Ends ---" << endl;
     cout << "\nPlayer " << getPlayerNumber() << " turn is over" << endl;
 } // issueOrder
-
-
-void testPlayers2(){
-
-    cout << "---------------------- Start of Player -------------- \n";
-    // Create the map 
-    Map* gameMap = mapLoader::createMapFromConquestFile("Canada.map");
-
-   // GameEngine* gameEngine = new GameEngine();
-   // gameEngine->setMap (gameMap);
-
-    // Players
-    Player* p1 = new Player();
-    OrdersList* playerOrders = new OrdersList();
-    Hand* playerHand = new Hand();
-
-    Player* p2 = new Player();
-    OrdersList* playerOrders2 = new OrdersList();
-    Hand* playerHand2 = new Hand();
-
-    //p1->setGameEngine(gameEngine);
-
-    // add territories
-    Territory* territory1 = gameMap->getContinent()[0]->getTerritories()[0]; // 1,548,116,Northern Islands,2,12
-    Territory* territory2 = gameMap->getContinent()[0]->getTerritories()[1]; // 2,510,124,Northern Islands,1,3
-    Territory* territory3 = gameMap->getContinent()[0]->getTerritories()[2]; // 1,548,116,Northern Islands,2,12
-    Territory* territory4 = gameMap->getContinent()[0]->getTerritories()[3]; // 2,510,124,Northern Islands,1,3
-    p1->addTerritory(territory1);
-    p1->addTerritory(territory2);
-    p2->addTerritory(territory3);
-    p2->addTerritory(territory4);
-   
-    // // add hand
-    playerHand->addCard(new Card(CardType::BOMB));
-    playerHand->addCard(new Card(CardType::BLOCKADE));
-    p1->setMyHand(playerHand);
-
-    playerHand2->addCard(new Card(CardType::BOMB));
-    playerHand2->addCard(new Card(CardType::BLOCKADE));
-    p2->setMyHand(playerHand2);
-
-    cout << "hello"; // WORKS
-    // // Add order
-    p1->issueOrder();
-    p2->issueOrder();
-
-}
