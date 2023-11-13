@@ -1,5 +1,8 @@
 #include "Player.cpp"
 
+/**
+ * g++ testMainGameLoop.cpp CommandProcessing.cpp LoggingObserver.cpp Command.cpp -o t
+*/
 
 void testMainGameLoop(){
 

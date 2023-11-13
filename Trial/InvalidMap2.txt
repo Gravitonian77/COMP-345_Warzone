@@ -1,0 +1,8 @@
+[Continents]
+Northern Islands=12
+Southern Islands=10
+
+[Territories]
+This is a non Map file
+Comp345
+HelloWorld!
