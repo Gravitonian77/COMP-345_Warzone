@@ -43,25 +43,25 @@ void testMainGameLoop(){
     // Create players
     Player* p0 = new Player();
     Player* p1 = new Player();
-    Player* p2 = new Player();
+   
 
     // OrdersList for players
-    p0->setMyOrdersList(new OrdersList); p1->setMyOrdersList(new OrdersList); p2->setMyOrdersList(new OrdersList);
+    p0->setMyOrdersList(new OrdersList); p1->setMyOrdersList(new OrdersList); 
 
     // Hand for players
-    p0->setMyHand(new Hand()); p1->setMyHand(new Hand()); p2->setMyHand(new Hand());
+    p0->setMyHand(new Hand()); p1->setMyHand(new Hand()); 
     
     // Game for players
-    p0->setGameEngine(gameEng); p1->setGameEngine(gameEng); p2->setGameEngine(gameEng);
+    p0->setGameEngine(gameEng); p1->setGameEngine(gameEng); 
 
     gameEng->addPlayer(p0); gameEng->addPlayer(p1);
     
     cout << "\nPlease enter the case number (1-5) for the demonstrations of testGameLoop." << endl;
     cout << "\ncase 1: 2 players with no cards. Player 0 has all territories in the map while player 2 has none." << endl;
     cout << "case 2: 2 players with no cards. Player 0 has 1 territory player 2 has 0." << endl;
-    cout << "case 3: 2 players with no cards. Player 0 has 1 continent of 12 territories player 2 has 1 territory." << endl;
+    cout << "case 3: 2 players with no cards. Player 0 has 1 continent of 12 territories player 2 has a continent of 10 territories." << endl;
     cout << "case 4: 2 players and both players have all cards and 1 territory each." << endl;
-    cout << "case 5: 2 players and both players have 1 territory each." << endl;   
+    cout << "case 5: 2 players and both players have 1 territory each." << endl;    
 
     string command = "assigncountries";
     int input = 0;
@@ -85,7 +85,7 @@ void testMainGameLoop(){
         cout <<"Case 2 has been selected."<<endl << endl;
         p0->addTerritory(gameMap->getTerritoryByName("1"));
 
-	gameEng->reinforcementPhase();
+        gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
 
@@ -95,14 +95,19 @@ void testMainGameLoop(){
         p0->addTerritory(gameMap->getTerritoryByName("1"));
 
         //Assigning a bonus of 3 units to continent
-        gameMap->getContinent()[0]->setArmyBonus(4);
-        
+        gameMap->getContinent()[0]->setArmyBonus(4); 
+        gameMap->getContinent()[1]->setArmyBonus(3); 
+    
         //Assigning territories to both players
         vector<Territory*> p0Territories =  gameMap->getContinent()[0]->getTerritories();
         p0->setMyTerritories(p0Territories);
         cout << endl;
-	    
-	gameEng->reinforcementPhase();
+
+        vector<Territory*> p1Territories =  gameMap->getContinent()[1]->getTerritories();
+        p1->setMyTerritories(p1Territories);
+        cout << endl;
+
+        gameEng->reinforcementPhase(); //p0 reinforcmentPool = floor(12/3) + 4 = 8 ; p1 reinforcementPool = floor(10/3)= 3 + 3 = 6
         gameEng->changeState(command);
         gameEng->mainGameLoop();
 
@@ -127,7 +132,7 @@ void testMainGameLoop(){
         p1->getMyHand()->addCard(new Card(CardType::AIRLIFT));
         p1->getMyHand()->addCard(new Card(CardType::DIPLOMACY));
 
-	gameEng->reinforcementPhase();
+        gameEng->reinforcementPhase();        
         gameEng->changeState(command);
         gameEng->mainGameLoop();
 
@@ -140,7 +145,7 @@ void testMainGameLoop(){
         p0->addTerritory(gameMap->getTerritoryByName("1"));
         p1->addTerritory(gameMap->getTerritoryByName("2"));
 
-	gameEng->reinforcementPhase();
+        gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
     }
@@ -150,8 +155,11 @@ void testMainGameLoop(){
     }
     
     // Release memory
-    delete p0, p1, p2;
-    p0, p1, p2 = nullptr;
+    delete p0, p1;
+    p0, p1 = nullptr;
+
+    // delete gameEng; --> no destructor is defined so can't delete
+    // gameEng = nullptr;
 
 }
 
