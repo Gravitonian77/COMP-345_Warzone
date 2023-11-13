@@ -56,17 +56,12 @@ void testMainGameLoop(){
 
     gameEng->addPlayer(p0); gameEng->addPlayer(p1);
     
-
-    // Showing different cases
-    // case 1: Player 1 has 3 territories and 2  has 12 territories ---> p1 should get 1 additional unit and p2 2 additional units
-    // case 2: Player 1 has 1 continent and player 2 has 6 territories --> Continent 1 will have bonus of 3 units
-
-    cout << "\nPlease enter the case number for the demonstrations of testGameLoop" << endl;
-    cout << "\ncase 1: 2 players with no cards. Player 0 has all territories in the map, player 2 has 0" << endl;
+    cout << "\nPlease enter the case number (1-5) for the demonstrations of testGameLoop." << endl;
+    cout << "\ncase 1: 2 players with no cards. Player 0 has all territories in the map while player 2 has none." << endl;
     cout << "case 2: 2 players with no cards. Player 0 has 1 territory player 2 has 0." << endl;
-    cout << "case 3: 2 players with no cards. Player 0 has 1 continent of 12 territories player 2 has 1 territory." << endl;  
-    // cout << "case 3: 2 players. Player 0 has 1 territory and player 2 has 0" << endl; 
-    // cout << "case 4: 2 players. Player 0 has all territories in map except 1. Player 1 has last territory "<< endl; // show(6)
+    cout << "case 3: 2 players with no cards. Player 0 has 1 continent of 12 territories player 2 has 1 territory." << endl;
+    cout << "case 4: 2 players and both players have all cards and 1 territory each." << endl;
+    cout << "case 5: 2 players and both players have 1 territory each." << endl;   
 
     string command = "assigncountries";
     int input = 0;
@@ -94,71 +89,61 @@ void testMainGameLoop(){
 
     }
     else if(input == 3){
+        cout <<"Case 2 has been selected."<<endl << endl;
+        p0->addTerritory(gameMap->getTerritoryByName("1"));
+
+        //Assigning a bonus of 3 units to continent
+        gameMap->getContinent()[0]->setArmyBonus(3);
+        
+        //Assigning territories to both players
+        vector<Territory*> p0Territories =  gameMap->getContinent()[0]->getTerritories();
+        p0->setMyTerritories(p0Territories);
+        cout << endl;
+
+        gameEng->changeState(command);
+        gameEng->mainGameLoop();
 
     }
+    else if(input == 4){
+        cout <<"Case 4 has been selected."<<endl << endl;
 
+        // Add territories
+        p0->addTerritory(gameMap->getTerritoryByName("1"));
+        p1->addTerritory(gameMap->getTerritoryByName("2"));
+
+        // Add Cards
+        p0->getMyHand()->addCard(new Card(CardType::BOMB));
+        p0->getMyHand()->addCard(new Card(CardType::REINFORCEMENT));
+        p0->getMyHand()->addCard(new Card(CardType::BLOCKADE));
+        p0->getMyHand()->addCard(new Card(CardType::AIRLIFT));
+        p0->getMyHand()->addCard(new Card(CardType::DIPLOMACY));
+        
+        p1->getMyHand()->addCard(new Card(CardType::BOMB));
+        p1->getMyHand()->addCard(new Card(CardType::REINFORCEMENT));
+        p1->getMyHand()->addCard(new Card(CardType::BLOCKADE));
+        p1->getMyHand()->addCard(new Card(CardType::AIRLIFT));
+        p1->getMyHand()->addCard(new Card(CardType::DIPLOMACY));
+        
+        gameEng->changeState(command);
+        gameEng->mainGameLoop();
+
+    }
+    else if(input == 5){
+
+        cout <<"Case 5 has been selected."<<endl << endl;
+
+        // Add territories
+        p0->addTerritory(gameMap->getTerritoryByName("1"));
+        p1->addTerritory(gameMap->getTerritoryByName("2"));
+
+        gameEng->changeState(command);
+        gameEng->mainGameLoop();
+    }
+    else{
+        cout << "You did not enter a valid option." <<endl << "Program will end." << endl;
+        exit(0);
+    }
     
-
-    // switch (input){
-    //     case 1:
-    //         cout <<"Case 1 has been selected."<<endl << endl;
-    //             gameEng->addPlayer(p2);
-    //             // Assigning territories to both players
-    //             p0->addTerritory(gameMap->getTerritoryByName("1"));
-    //             p0->addTerritory(gameMap->getTerritoryByName("2"));
-    //             p0->addTerritory(gameMap->getTerritoryByName("3"));
-    //             cout << endl;
-
-    //             p1->addTerritory(gameMap->getTerritoryByName("4"));
-    //             p1->addTerritory(gameMap->getTerritoryByName("5"));
-    //             p1->addTerritory(gameMap->getTerritoryByName("6"));
-    //             p1->addTerritory(gameMap->getTerritoryByName("7"));
-    //             p1->addTerritory(gameMap->getTerritoryByName("8"));
-    //             p1->addTerritory(gameMap->getTerritoryByName("9"));
-    //             cout << endl;
-
-    //             // p2->addTerritory(gameMap->getTerritoryByName("10"));
-    //             // cout << endl;
-
-    //             //Reinforcement pool is 20
-    //             // p0->setReinforcementPool(20);
-    //             // p1->setReinforcementPool(20);
-    //             // p2->setReinforcementPool(20);
-    //             gameEng->changeState(command);
-
-    //             gameEng->mainGameLoop();
-    //             // gameEng->reinforcementPhase();
-
-    //             // cout<< "Player " << p0->getPlayerNumber() << " has a reinforcement pool of " << p0->getReinforcementPool() << endl;
-    //             // cout<< "Player " << p1->getPlayerNumber() << " has a reinforcement pool of " << p1->getReinforcementPool() << endl;
-    //             // cout<< "Player " << p2->getPlayerNumber() << " has a reinforcement pool of " << p2->getReinforcementPool() << endl;
-
-                
-    //     break;
-    //     case 2:
-    //         cout <<"Case 2 has been selected."<<endl << endl;
-            
-    //         // Assigning a bonus of 3 units to continent
-    //         gameMap->getContinent()[0]->setArmyBonus(3);
-
-    //         // Assigning territories to both players
-    //         vector<Territory*> p0Territories =  gameMap->getContinent()[0]->getTerritories();
-    //         p0->setMyTerritories(p0Territories);
-    //         cout << endl;
-
-    //         p1->addTerritory(gameMap->getTerritoryByName("13"));
-    //         p1->addTerritory(gameMap->getTerritoryByName("14"));
-    //         p1->addTerritory(gameMap->getTerritoryByName("15"));
-    //         cout << endl;
-
-    //         gameEng->reinforcementPhase();
-
-    //         cout<< "Player " << p0->getPlayerNumber() << " has a reinforcement pool of " << p0->getReinforcementPool() << endl;
-    //         cout<< "Player " << p1->getPlayerNumber() << " has a reinforcement pool of " << p1->getReinforcementPool() << endl;
-
-    //     break;
-    // }
-
     // Release memory
     delete p0, p1, p2;
     p0, p1, p2 = nullptr;
