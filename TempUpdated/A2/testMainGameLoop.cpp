@@ -76,6 +76,7 @@ void testMainGameLoop(){
         p0->setMyTerritories(p0Territories);
         cout << endl;
 
+        gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
     }
@@ -84,22 +85,24 @@ void testMainGameLoop(){
         cout <<"Case 2 has been selected."<<endl << endl;
         p0->addTerritory(gameMap->getTerritoryByName("1"));
 
+	gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
 
     }
     else if(input == 3){
-        cout <<"Case 2 has been selected."<<endl << endl;
+        cout <<"Case 3 has been selected."<<endl << endl;
         p0->addTerritory(gameMap->getTerritoryByName("1"));
 
         //Assigning a bonus of 3 units to continent
-        gameMap->getContinent()[0]->setArmyBonus(3);
+        gameMap->getContinent()[0]->setArmyBonus(4);
         
         //Assigning territories to both players
         vector<Territory*> p0Territories =  gameMap->getContinent()[0]->getTerritories();
         p0->setMyTerritories(p0Territories);
         cout << endl;
-
+	    
+	gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
 
@@ -123,7 +126,8 @@ void testMainGameLoop(){
         p1->getMyHand()->addCard(new Card(CardType::BLOCKADE));
         p1->getMyHand()->addCard(new Card(CardType::AIRLIFT));
         p1->getMyHand()->addCard(new Card(CardType::DIPLOMACY));
-        
+
+	gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
 
@@ -136,6 +140,7 @@ void testMainGameLoop(){
         p0->addTerritory(gameMap->getTerritoryByName("1"));
         p1->addTerritory(gameMap->getTerritoryByName("2"));
 
+	gameEng->reinforcementPhase();
         gameEng->changeState(command);
         gameEng->mainGameLoop();
     }
@@ -147,9 +152,6 @@ void testMainGameLoop(){
     // Release memory
     delete p0, p1, p2;
     p0, p1, p2 = nullptr;
-
-    // delete gameEng; --> no destructor is defined so can't delete
-    // gameEng = nullptr;
 
 }
 
