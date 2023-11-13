@@ -26,6 +26,7 @@ private:
 	int reinforcementPool; 
 	Hand* myHand; 
     GameEngine* myGameEngine;
+    vector<Player*> agreements;
 
 public:
     // Constructors
@@ -68,5 +69,11 @@ public:
     // Methods Required
     vector<Territory*> toDefend();
     vector<Territory*> toAttack();
-    void issueOrder(); 
+    void issueOrder();
+
+    // Agreements
+    void addAgreement(Player* player);
+    void removeAgreement(Player* player);
+    vector<Player*> getAgreements() const;
+    bool hasAgreement(Player* player) const;
 };

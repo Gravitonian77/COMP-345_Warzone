@@ -78,6 +78,36 @@ GameEngine* Player::getMyGameEngine() const{
     return myGameEngine;
 }
 
+// Returns the list of players that the player has agreements with
+vector<Player*> Player::getAgreements() const {
+    return agreements;
+}
+
+bool Player::hasAgreement(Player *player) const
+{
+    return std::find(agreements.begin(), agreements.end(), player) != agreements.end();
+}
+
+// add a player to the list of players that the player has agreements with
+void Player::addAgreement(Player* player) {
+    agreements.push_back(player);
+}
+
+// remove a player from the list of players that the player has agreements with
+void Player::removeAgreement(Player* player) {
+    auto it = std::find(agreements.begin(), agreements.end(), player);
+    if (it != agreements.end()) {
+        // Player found, print its number
+        cout << "Player " << (*it)->getPlayerNumber() << " was removed from player " << getPlayerNumber() << "'s list of agreements.\n";
+        // Remove the player
+        agreements.erase(it);
+    } else {
+        // Player not found, print a different message if needed
+        cout << "Player not found in player's list of agreements.\n";
+    }
+}
+
+
 // Mutators
 void Player::setReinforcementPool(int pool){
     reinforcementPool = pool;

@@ -29,7 +29,10 @@ Order::Order(bool executed, string effect) {
 }
 
 //validate method
-bool Order::validate() {}
+bool Order::validate() {
+    // add your validation logic here
+    return true; // replace with your actual validation result
+}
 
 //execute method
 void Order::execute() {}
@@ -281,12 +284,6 @@ bool Advance::validate() {
         return false;
     }
 
-    // check if the target territory belongs to the player
-    if (target->getOwner() == player){
-        cout<< "Advance order is invalid because the target territory belongs to the player" << endl;
-        return false;
-    }
-
     //If the source territory does not belong to the player that issued the order, the order is invalid.
     if (source->getOwner() != player){
         cout<< "Advance order is invalid because the source territory does not belong to the player" << endl;
@@ -295,7 +292,7 @@ bool Advance::validate() {
 
     //If the target territory is not adjacent to the source territory, the order is invalid.
     bool targetAdjacent = false;
-    for (Territory* adjacentTerritory : source->getAdjacentTerritories()) {
+    for (auto* adjacentTerritory : source->getAdjacentTerritories()) {
         if (adjacentTerritory == target) {
             targetAdjacent = true;
             break;
@@ -690,7 +687,7 @@ bool Airlift::validate() {
     }
 
     // check if the target territory belongs to the player
-    if (getTarget()->getOwner() == getPlayer()){
+    if (getTarget()->getOwner() != getPlayer()){
         cout<< "Airlift order is invalid because the target territory belongs to the player" << endl;
         return false;
     }
@@ -820,6 +817,9 @@ bool Negotiate::validate() {
 //execute method
 void Negotiate::execute() {
     if (validate()){
+        // add plays to the agreements list
+        player1->addAgreement(player2);
+        player2->addAgreement(player1);
         setExecuted(true);
         setEffect("Negotiate order has been executed");
     }
